@@ -1,0 +1,129 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Privacy Policy — BracketMath"
+  description="BracketMath uses no cookies, no tracking pixels, and no personal data collection. Calculator inputs stay in your browser. Read the full privacy policy."
+>
+  <section class="px-6 pt-16 pb-10">
+    <div class="mx-auto max-w-3xl">
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-4">
+        Privacy
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-6">
+        No cookies. No tracking. Your numbers never leave your browser.
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] leading-relaxed">
+        BracketMath is built on the principle that you should be able to model your own tax and retirement
+        scenarios without anyone — including us — ever seeing the inputs. This page explains exactly what
+        data is and isn't collected, by whom, and for what purpose.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+      <h2>The short version</h2>
+      <ul>
+        <li>No cookies are set on this site.</li>
+        <li>No personal data is collected, stored, or transmitted from any calculator.</li>
+        <li>All calculations run entirely in your browser using JavaScript. Inputs (your salary, dividend, pension, age, etc.) are never sent to a server.</li>
+        <li>We use Cloudflare Web Analytics — a privacy-preserving, cookieless analytics service — to count anonymous page views.</li>
+        <li>No newsletter sign-up, no contact form, no account creation is currently offered. If we add any of these later, this page will be updated and the change noted explicitly.</li>
+      </ul>
+
+      <h2>1. Data controller</h2>
+      <p>
+        For the purposes of the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act
+        2018, the data controller for BracketMath is Luke Bell, contactable at
+        <a href="mailto:[email protected]">[email protected]</a>.
+      </p>
+
+      <h2>2. Calculator inputs (the important bit)</h2>
+      <p>
+        Every calculator on BracketMath is a static page that loads a small amount of JavaScript into your
+        browser. When you type a number into a calculator (your salary, dividend, pension contribution,
+        age, retirement age, etc.) and click "Calculate", the calculation happens entirely on your device.
+        Your inputs <strong>never travel across the network</strong>. They are never logged, stored, sold,
+        shared, or seen by us, by Cloudflare, by any analytics provider, or by anyone else.
+      </p>
+      <p>
+        Refresh the page and your inputs are gone forever, even from your own browser (unless we add an
+        explicit "save" feature in future — which we would communicate clearly).
+      </p>
+
+      <h2>3. Cookies</h2>
+      <p>
+        BracketMath does not set any first-party cookies. There is no cookie banner because there is nothing
+        to consent to. The site is statically generated and served via Cloudflare's edge network; Cloudflare
+        may set a strictly necessary security cookie (`__cf_bm`) to mitigate bot traffic — this is exempt
+        from the consent requirement under the Privacy and Electronic Communications Regulations
+        (PECR) Regulation 6(4)(b) because it is "strictly necessary" for the service you have requested
+        (delivering the website). It cannot be used to track you across other sites.
+      </p>
+
+      <h2>4. Analytics</h2>
+      <p>
+        We use <strong>Cloudflare Web Analytics</strong> to count page views and broad geographic
+        information (typically: country, sometimes region). This is a cookieless, privacy-preserving
+        analytics service. No personal data, no IP addresses, no device fingerprints, and no cross-site
+        tracking identifiers are collected. Cloudflare's documentation of the service is available at
+        <a href="https://www.cloudflare.com/web-analytics/" rel="noopener">cloudflare.com/web-analytics</a>.
+      </p>
+      <p>
+        We do <strong>not</strong> use Google Analytics, Meta/Facebook Pixel, TikTok Pixel, Twitter Pixel,
+        Hotjar, FullStory, Microsoft Clarity, or any session-replay or fingerprinting analytics services.
+      </p>
+
+      <h2>5. Server logs</h2>
+      <p>
+        Cloudflare, as our hosting and CDN provider, processes basic technical metadata (HTTP request
+        details, IP address, user agent) for the purpose of serving the page to you and protecting the
+        site against denial-of-service and abusive bot traffic. Cloudflare's privacy practices for this
+        processing are documented at
+        <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">cloudflare.com/privacypolicy</a>.
+        We do not receive, store, or have access to these raw logs.
+      </p>
+
+      <h2>6. Affiliate links</h2>
+      <p>
+        Some outbound links on this site are affiliate links (see the <a href="/disclaimer">disclaimer</a>
+        for full details). When you click an affiliate link, the destination third-party network or
+        merchant (e.g. Awin, Impact.com, or the brand directly) may set a cookie on your browser to
+        attribute a future sign-up or purchase to BracketMath. That cookie is set by the third party,
+        not by us, and is governed by their privacy policy — not this one. If you do not want to be tracked
+        by a third party after clicking, you can right-click the affiliate link, copy the destination URL,
+        and visit the merchant directly without the tracking parameter.
+      </p>
+
+      <h2>7. Email contact</h2>
+      <p>
+        If you email <a href="mailto:[email protected]">[email protected]</a> we will, of course,
+        see your email address and your message. We use Gmail (operated by Google) to receive and read
+        these emails. We don't add you to any list, don't share your message with anyone, and delete the
+        thread once the matter is resolved. Google's processing of email is governed by their own
+        privacy policy.
+      </p>
+
+      <h2>8. Your rights under UK GDPR</h2>
+      <p>
+        Because BracketMath does not collect or store personal data about you, there is, in practice,
+        nothing for us to disclose, rectify, port, or delete. If you have nevertheless emailed us and
+        wish for the thread to be deleted, email us and we will delete it. You also have the right to
+        complain to the Information Commissioner's Office (<a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>)
+        if you believe we have mishandled your data.
+      </p>
+
+      <h2>9. Changes to this policy</h2>
+      <p>
+        If we materially change what we do with data — for example, by adding a newsletter sign-up,
+        a contact form, or a user account system — we will update this page and note the change in the
+        "Last updated" line below. Cosmetic clarifications won't be flagged but won't change the substance.
+      </p>
+
+      <p class="text-sm text-[color:var(--color-ink-light)] mt-12">
+        Last updated: 12 May 2026.
+      </p>
+    </div>
+  </section>
+</Layout>

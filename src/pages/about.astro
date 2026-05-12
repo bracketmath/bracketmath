@@ -1,0 +1,93 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="About & Methodology — BracketMath"
+  description="The mathematics, the methodology, and the author behind BracketMath: PhD-level UK tax & pension calculators built from first principles."
+>
+  <section class="px-6 pt-16 pb-10">
+    <div class="mx-auto max-w-3xl">
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-4">
+        About · Methodology
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-6">
+        Calculators built from first principles, not affiliate templates.
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] leading-relaxed">
+        Most UK tax and pension calculators online are point-estimate toys with affiliate links bolted on.
+        BracketMath is built differently — every figure on this site comes from explicit HMRC-published rates,
+        peer-reviewed return models, and bounded numerical optimisation. The maths is the product.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+      <h2>About the author</h2>
+      <p>
+        BracketMath is built and maintained by <strong>Luke Bell</strong>, who holds postgraduate qualifications
+        in mathematics, statistics, computer science, and data science. The motivation for the project was simple:
+        after losing months to commercial accountancy software that quietly used naive rule-of-thumb heuristics
+        for salary-dividend optimisation and gave point-estimate retirement projections that ignored
+        sequence-of-returns risk, it became obvious that the calculators most UK contractors and Ltd Co directors
+        rely on were mathematically inadequate for the decisions they were being used to make.
+      </p>
+      <p>
+        BracketMath exists to fix that for the open web. Every calculator on the site is open-source in spirit:
+        the methodology page for each tool documents the exact formulas, the data sources, the assumptions,
+        and the limitations.
+      </p>
+
+      <h2>Methodology — the short version</h2>
+
+      <h3>Tax calculations</h3>
+      <p>
+        All income tax, National Insurance (Class 1, 2, 4), corporation tax (including the £50,000–£250,000
+        marginal relief formula), and dividend tax computations use the published HMRC rates and thresholds
+        for the UK tax year 2026/27. The Personal Allowance taper above £100,000 and the High Income Child
+        Benefit Charge are modelled exactly, not approximated. Scotland and Wales income tax variants are
+        supported where the underlying calculator is sensitive to region.
+      </p>
+
+      <h3>Joint optimisation</h3>
+      <p>
+        The Salary–Dividend Split Optimiser does not optimise salary or dividends or pension contributions
+        in isolation — it searches the joint space of all three using bounded numerical optimisation,
+        accounting for the interaction effects between corporation tax, the Employment Allowance,
+        employer's NI, the dividend allowance, and the £100k Personal Allowance taper. The optimum is
+        often £500–£3,000 a year better than rule-of-thumb advice.
+      </p>
+
+      <h3>Monte Carlo & retirement modelling</h3>
+      <p>
+        Pension and retirement calculators use block-bootstrap resampling of historical UK equity (1900–2024,
+        Dimson-Marsh-Staunton total return) and gilt returns. Block bootstrapping preserves the autocorrelation
+        and volatility clustering that naive monthly resampling destroys — the difference matters most in
+        sequence-of-returns risk, which dominates outcomes in early retirement. Each calculation runs
+        10,000 simulated paths and reports the 5th, 25th, 50th, 75th, and 95th percentiles of pot value
+        and the probability of capital exhaustion before age 95.
+      </p>
+
+      <h3>What this site is not</h3>
+      <p>
+        This site is not financial advice. It does not know your full personal circumstances, your employer's
+        pension scheme, your other investments, your tax residency complications, or your appetite for risk.
+        Every calculation is a model — useful for thinking, not a substitute for a regulated adviser when
+        the stakes are large. See the full <a href="/disclaimer">disclaimer</a>.
+      </p>
+
+      <h2>Updates</h2>
+      <p>
+        Tax bands and thresholds change every April. BracketMath is updated each tax year to reflect
+        the new figures, with a changelog noting which calculators changed and why. If HMRC publishes a
+        mid-year change (rare, but it happens), affected calculators are updated within 14 days of the
+        announcement.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Spotted a bug in a calculation? Have a calculator request? Email <a href="mailto:[email protected]">[email protected]</a>.
+      </p>
+    </div>
+  </section>
+</Layout>
