@@ -1,0 +1,300 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TakeHome from '../../components/calculators/TakeHome.tsx';
+---
+<Layout
+  title="Contractor Take-Home Calculator: Inside vs Outside IR35 (2026/27)"
+  description="Free interactive UK contractor calculator. Compares Inside-IR35 (umbrella PAYE) and Outside-IR35 (Ltd Co) take-home, side by side, using the full HMRC tax stack — corporation tax, employer NI, employee NI, income tax, dividend tax, salary sacrifice, and the £100k personal-allowance taper. Shows the day-rate break-even number that contractors actually care about."
+>
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6" aria-label="Breadcrumb">
+        <a
+          href="/"
+          class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline"
+          >Home</a
+        >
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span class="text-[color:var(--color-ink-light)]">Calculators</span>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>Take-Home (Inside vs Outside IR35)</span>
+      </nav>
+
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        UK Tax Year 2026/27 · Contractors (rUK)
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        Take-Home: Inside vs Outside IR35
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] max-w-3xl leading-relaxed">
+        Compare your net take-home as a UK contractor under both routes — umbrella PAYE
+        (inside IR35) and Ltd Co (outside IR35) — and find the <strong>day-rate
+        break-even</strong>: the inside-IR35 day rate that delivers the same net cash as your
+        current outside-IR35 setup.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 pb-16">
+    <div class="mx-auto max-w-6xl">
+      <TakeHome client:only="react">
+        <div slot="fallback" class="grid lg:grid-cols-[360px_1fr] gap-8">
+          <div class="bg-white rounded-lg border border-[color:var(--color-rule)] p-6 min-h-[400px]">
+            <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)]">
+              Loading inputs…
+            </p>
+          </div>
+          <div class="bg-white rounded-lg border border-[color:var(--color-rule)] p-6 min-h-[400px]">
+            <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)]">
+              The calculator requires JavaScript. If nothing appears, please enable it for this
+              page.
+            </p>
+          </div>
+        </div>
+      </TakeHome>
+    </div>
+  </section>
+
+  <section class="px-6 py-16 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+      <h2>What is IR35 and why does it matter for take-home?</h2>
+      <p>
+        <strong>IR35</strong> is the popular name for a body of UK tax legislation, formally
+        Chapter 8 (and the more recent Chapter 10 / off-payroll working rules) of the Income
+        Tax (Earnings and Pensions) Act 2003. Its purpose is to stop people who would
+        otherwise be employees from paying less tax simply by inserting an intermediary
+        company between themselves and the work.
+      </p>
+      <p>
+        If your engagement is <strong>inside IR35</strong>, you (or, since April 2021 in the
+        private sector, your end-client) must treat the payments as deemed-employment income.
+        Income tax and National Insurance get deducted at PAYE rates, on roughly the same
+        basis as an employee. The classic Ltd-Co advantages — extracting via a low salary
+        plus dividends, retaining profits, employer pension contributions before corporation
+        tax — disappear.
+      </p>
+      <p>
+        If your engagement is <strong>outside IR35</strong>, you can operate through a Ltd
+        Co and use the standard director-extraction toolkit — the same one our
+        <a href="/calculators/salary-dividend-split">Salary-Dividend Split Optimiser</a>
+        solves. The tax efficiency is materially better but the responsibility for getting
+        the status determination right sits with the client (large/medium private-sector
+        clients) or, for small clients and overseas engagements, with you.
+      </p>
+
+      <h2>This calculator doesn't decide your status</h2>
+      <p>
+        Status is a question of contract <em>and</em> working practices. The three classic
+        tests — control, substitution and mutuality of obligation — come from the case law
+        starting with <em>Ready Mixed Concrete</em> (1968) and have been refined through
+        every major IR35 case since. HMRC's own
+        <a href="https://www.gov.uk/guidance/check-employment-status-for-tax"
+          rel="nofollow noopener"
+          target="_blank">CEST tool</a>
+        is the formal way to get an opinion, but it's controversial — independent IR35
+        specialists frequently disagree with CEST outputs, and tribunals have repeatedly
+        ruled against HMRC's CEST-aligned determinations.
+      </p>
+      <p>
+        For that reason, <strong>this calculator simply compares the two financial
+        scenarios for someone who already knows their status</strong>. Use it to:
+      </p>
+      <ul>
+        <li>
+          Decide whether a specific inside-IR35 offer beats an outside-IR35 offer at a
+          different day rate.
+        </li>
+        <li>
+          Negotiate the day-rate uplift you need to break even when a previously-outside role
+          is converted to inside.
+        </li>
+        <li>
+          Quantify the tax-efficiency gap that justifies the genuine business risks of
+          operating outside IR35 (cost of professional indemnity, accountancy, IR35 insurance,
+          status investigation defence).
+        </li>
+      </ul>
+
+      <h2>How the maths works</h2>
+      <h3>Inside IR35 (umbrella / deemed employment)</h3>
+      <p>
+        Money flows from the end-client (or agency) to your umbrella company. The umbrella
+        deducts:
+      </p>
+      <ol>
+        <li><strong>Its own fee</strong> — typically £25–£35/week (£1,300–£1,800/yr).</li>
+        <li>
+          <strong>Apprenticeship Levy</strong> (0.5%) if the agency/umbrella passes it
+          through. Legally this is only due once a paybill exceeds £3M (HMRC PAYE32),
+          but many pass-through models still charge it. The checkbox lets you model
+          either treatment.
+        </li>
+        <li>
+          <strong>Employer NI</strong> at 15% above £5,000 (the Secondary Threshold for
+          2026/27, per HMRC's published NI rates). This is paid out of the assignment value
+          before any salary is set.
+        </li>
+        <li>
+          The remainder becomes your <strong>gross deemed salary</strong>, on which you pay
+          <strong>income tax</strong> at 20% / 40% / 45% (rUK) and <strong>employee NI</strong>
+          at 8% / 2%, all on the standard 2026/27 thresholds.
+        </li>
+      </ol>
+      <p>
+        If you opt for <strong>pension salary sacrifice</strong>, the sacrifice comes off the
+        gross before employer NI is calculated — so you save income tax + employee NI on the
+        sacrificed amount, and the umbrella saves employer NI on it (which a clean umbrella
+        will pass back to you). For a 40% taxpayer that's roughly a 49% saving on every £1
+        sacrificed — by far the most tax-efficient lever inside-IR35.
+      </p>
+
+      <h3>Outside IR35 (Ltd Co)</h3>
+      <p>
+        Day rate × billable days = company turnover. From this we subtract reasonable
+        business expenses (accountancy, insurance, software, training, etc.). The remainder
+        is the profit pool. We then run the
+        <a href="/calculators/salary-dividend-split">Salary–Dividend Split Optimiser</a> on
+        this pool, with the user's desired pension contribution treated as an employer
+        contribution (deductible from corporation tax, no NI on either side).
+      </p>
+      <p>
+        The optimiser solves for the (salary, dividend, pension) triple that maximises
+        director net wealth, taking into account every interaction in the UK tax code:
+      </p>
+      <ul>
+        <li>The £12,570 personal allowance and its 60% effective taper above £100,000 income.</li>
+        <li>The £50,270 higher-rate threshold for both income tax and dividend tax.</li>
+        <li>The £125,140 additional-rate threshold.</li>
+        <li>The £500 dividend allowance.</li>
+        <li>
+          The £50,000 / £250,000 corporation-tax small/main profit thresholds and the
+          marginal-relief band between them (26.5% effective marginal CT rate).
+        </li>
+        <li>The £60,000 pension Annual Allowance and the tapered AA from £260,000 adjusted income.</li>
+      </ul>
+
+      <h2>The break-even day rate explained</h2>
+      <p>
+        The single most important number this calculator produces is the
+        <strong>break-even day rate</strong>. It answers the question every contractor asks
+        when an outside-IR35 contract gets "renewed" as inside-IR35: <em>"What day rate
+        would I need on the new inside contract to be no worse off?"</em>
+      </p>
+      <p>
+        We compute this by bisection on the day-rate axis: holding all the other inputs
+        constant, we find the inside-IR35 day rate that produces the same net cash as the
+        current outside-IR35 plan. The result is exact to within £0.50/yr.
+      </p>
+      <p>
+        A representative example: a £500/day, 220-day contractor outside-IR35 with £3,000 of
+        business expenses takes home roughly <strong>£71,000/year net</strong> on default
+        assumptions. To match that on an umbrella PAYE inside-IR35 setup, the day rate would
+        need to rise to around <strong>£640/day</strong> — a +28% uplift. Most agencies
+        will not match this when they "convert" a contract; the calculator quantifies how
+        much you'd be giving up.
+      </p>
+
+      <h2>Important things this calculator does <em>not</em> model</h2>
+      <ul>
+        <li>
+          <strong>Student loans.</strong> Plan 1, 2, 4, Postgraduate — these are
+          income-contingent deductions through PAYE inside-IR35 and through self-assessment
+          outside-IR35. We will add them as an optional toggle in a future revision.
+        </li>
+        <li>
+          <strong>High Income Child Benefit Charge (HICBC).</strong> Above £60,000 adjusted
+          net income, child benefit starts to taper at 1% per £200 of income, fully tapered
+          by £80,000 (post-April-2024 rules,
+          <a
+            href="https://www.gov.uk/child-benefit-tax-charge"
+            rel="nofollow noopener"
+            target="_blank">gov.uk/child-benefit-tax-charge</a>). For families this is a
+          material additional consideration.
+        </li>
+        <li>
+          <strong>Scottish income tax rates.</strong> Scotland has separate income tax bands
+          and rates (Starter, Basic, Intermediate, Higher, Advanced, Top). This calculator
+          uses rUK rates only.
+        </li>
+        <li>
+          <strong>VAT.</strong> Outside-IR35 contractors above £90,000 turnover must
+          register for VAT, but VAT is generally output-tax on the gross plus input-tax
+          recovery — it doesn't change personal take-home if you charge VAT on top of your
+          fee. The Flat Rate Scheme can be a small bonus (typically £500–£2,000/yr) for
+          eligible businesses and we'll add it as a toggle.
+        </li>
+        <li>
+          <strong>Off-payroll status risk.</strong> If HMRC successfully challenges an
+          outside-IR35 status determination, the bill (back tax, NI, penalties, interest)
+          can be substantial. Status determination is a separate problem from extraction
+          maths; the calculator addresses the latter.
+        </li>
+        <li>
+          <strong>Multi-year planning.</strong> Retaining profits in the Ltd Co for later
+          extraction, carry-forward of pension allowance, sequence of contracts with mixed
+          status — none of these are modelled. The calculator answers a one-year question.
+        </li>
+      </ul>
+
+      <h2>Sources &amp; further reading</h2>
+      <ul>
+        <li>
+          <a
+            href="https://www.gov.uk/guidance/understanding-off-payroll-working-ir35"
+            rel="nofollow noopener"
+            target="_blank">HMRC — Understanding off-payroll working (IR35)</a>
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/hmrc-internal-manuals/employment-status-manual"
+            rel="nofollow noopener"
+            target="_blank">HMRC Employment Status Manual (ESM)</a> — definitive guidance on
+          status determination.
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/guidance/check-employment-status-for-tax"
+            rel="nofollow noopener"
+            target="_blank">HMRC CEST tool</a> — official status check.
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/government/publications/rates-and-allowances-income-tax/income-tax-rates-and-allowances-current-and-past"
+            rel="nofollow noopener"
+            target="_blank">HMRC income tax rates and allowances</a>
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/government/publications/rates-and-allowances-national-insurance-contributions"
+            rel="nofollow noopener"
+            target="_blank">HMRC National Insurance contributions</a>
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/government/publications/rates-and-allowances-corporation-tax"
+            rel="nofollow noopener"
+            target="_blank">HMRC Corporation Tax rates</a>
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual"
+            rel="nofollow noopener"
+            target="_blank">HMRC Pensions Tax Manual</a>
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/guidance/pay-apprenticeship-levy"
+            rel="nofollow noopener"
+            target="_blank">HMRC Apprenticeship Levy guidance</a>
+        </li>
+      </ul>
+
+      <p class="text-sm text-[color:var(--color-ink-light)]">
+        This calculator runs entirely in your browser. We do not store, log or transmit your
+        inputs to any server. See the <a href="/disclaimer">disclaimer</a> for the usual
+        warnings about why a calculator is not a substitute for an accountant or an IR35
+        specialist.
+      </p>
+    </div>
+  </section>
+</Layout>

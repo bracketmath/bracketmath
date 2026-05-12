@@ -1,0 +1,345 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SippOptimiser from '../../components/calculators/SippOptimiser.tsx';
+---
+<Layout
+  title="SIPP Retirement Optimiser — UK Monte Carlo Pension Calculator (2026/27)"
+  description="Free interactive Monte Carlo SIPP retirement calculator for UK savers. 10,000 simulated paths using a block-bootstrap of UK real returns 1900–2024. Shows probability of meeting your target income, probability of pot exhaustion, and the full distribution of outcomes — not a single misleading point estimate."
+>
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6" aria-label="Breadcrumb">
+        <a
+          href="/"
+          class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline"
+          >Home</a
+        >
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span class="text-[color:var(--color-ink-light)]">Calculators</span>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>SIPP Optimiser</span>
+      </nav>
+
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        Monte Carlo · 10,000 paths · UK real returns 1900–2024
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        SIPP Retirement Optimiser
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] max-w-3xl leading-relaxed">
+        A retirement calculator that gives you the answer the maths actually supports: a
+        <em>distribution</em> of outcomes across 10,000 simulated lifetimes, not a single
+        number based on an arbitrary "assumed return". Built on a block-bootstrap of UK
+        equity and gilt returns from 1900 to 2024.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 pb-16">
+    <div class="mx-auto max-w-6xl">
+      <SippOptimiser client:only="react">
+        <div slot="fallback" class="grid lg:grid-cols-[360px_1fr] gap-8">
+          <div class="bg-white rounded-lg border border-[color:var(--color-rule)] p-6 min-h-[400px]">
+            <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)]">
+              Loading inputs…
+            </p>
+          </div>
+          <div class="bg-white rounded-lg border border-[color:var(--color-rule)] p-6 min-h-[400px]">
+            <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)]">
+              The Monte Carlo simulator requires JavaScript to run. If nothing appears
+              after a few seconds, please enable it for this page.
+            </p>
+          </div>
+        </div>
+      </SippOptimiser>
+    </div>
+  </section>
+
+  <section id="methodology" class="px-6 py-16 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+      <h2>Why most online pension calculators are misleading</h2>
+      <p>
+        The standard UK pension projection — the kind every provider shows you in your annual
+        statement — works like this: take your current pot, add your assumed annual
+        contribution, compound at an assumed rate (typically 2%, 5% and 8% real, per the
+        FCA's COBS 13 Annex 2 standardised assumptions), and report what you'd have at
+        retirement. It's a deterministic single-point projection that hides the only thing
+        that really matters: <em>how reliably</em> your plan works.
+      </p>
+      <p>
+        Two retirees with identical "average" returns can end up with wildly different
+        outcomes depending on <em>when</em> the bad years happen. A 30% drawdown in your
+        first three years of retirement is catastrophic; the same drawdown in your last
+        three years is barely noticeable. This is called <strong>sequence-of-returns risk</strong>,
+        and it's the single biggest reason why financial-planning point-estimate
+        calculators give a false sense of security.
+      </p>
+      <p>
+        Academic research on retirement sustainability — from
+        <a href="https://www.aaii.com/journal/199402/feature.pdf" rel="nofollow noopener" target="_blank">Bengen (1994)</a>'s
+        original 4% rule, through the Trinity Study, to the modern Pfau / Kitces literature —
+        all converges on the same point: you cannot model retirement with averages. You have
+        to model the <em>distribution</em>, and you have to model it with returns that have
+        realistic clustering and fat tails.
+      </p>
+
+      <h2>What this calculator does differently</h2>
+      <p>
+        This tool runs 10,000 simulated retirement paths through three stages:
+      </p>
+      <ol>
+        <li>
+          <strong>Accumulation phase.</strong> From your current age to your chosen
+          retirement age, your pot grows by a randomly drawn historical return each month,
+          and your annual contribution is added at the start of each year.
+        </li>
+        <li>
+          <strong>Decumulation phase.</strong> From retirement age to age 95, you withdraw
+          your target real income each year (less any State Pension once it kicks in at age 67).
+          The pot continues to be invested and earns or loses money each month.
+        </li>
+        <li>
+          <strong>Outcome scoring.</strong> Each path either reaches 95 with money still in
+          the pot ("success") or hits zero before then ("ruin"). The fraction of successful
+          paths is the headline probability of meeting your income target.
+        </li>
+      </ol>
+      <p>
+        Crucially, the returns are not drawn from a Gaussian distribution or a
+        log-normal — they're drawn directly from history, in blocks. We'll explain why that
+        matters in the next section.
+      </p>
+
+      <h2>The block-bootstrap method</h2>
+      <p>
+        Real market returns aren't independent. A bad year tends to be followed by a
+        not-great year; a great year is more likely to be followed by another good one.
+        Volatility clusters. Inflation persists. None of these features survive if you
+        draw each year's return independently from a normal distribution — yet that's
+        exactly what most "Monte Carlo" pension calculators do.
+      </p>
+      <p>
+        A <strong>block bootstrap</strong> preserves these properties. Instead of drawing
+        single years, we draw contiguous 12-year blocks from the historical record. So a
+        30-year simulated path might be "1929–1940" followed by "1973–1984" followed by
+        "2008–2019". Each block is a real, lived sequence of returns including its
+        autocorrelation, its inflation regime, and its volatility clustering.
+      </p>
+      <p>
+        We use a 12-year block by default. Shorter blocks underweight long regimes
+        (the 1970s stagflation, the 1980s–90s disinflation, the 2000s lost decade). Longer
+        blocks reduce the number of effectively independent draws and increase Monte Carlo
+        noise. Twelve years is roughly one business cycle and matches the practice in
+        academic retirement-finance papers using UK data (<a
+          href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2479083"
+          rel="nofollow noopener"
+          target="_blank">Pfau, Tomlinson</a>; <a
+          href="https://www.cfainstitute.org/-/media/documents/article/rf-publication/2018/financial-market-history-full-book.pdf"
+          rel="nofollow noopener"
+          target="_blank">Dimson, Marsh, Staunton</a>).
+      </p>
+      <p>
+        The dataset itself — UK equity total returns, UK gilt total returns, and UK CPI
+        from 1900 to 2024 — is constructed from the Bank of England's Millennium of
+        Macroeconomic Data, the Jordà-Schularick-Taylor Macrohistory Database, and the
+        Barclays Equity Gilt Study. Summary statistics are cross-checked against the
+        Dimson-Marsh-Staunton numbers published in the annual <em>UBS Global Investment
+        Returns Yearbook</em>. The data file is shipped in the page bundle —
+        <code>/src/data/historical-returns.json</code> — and the source provenance is
+        documented in <code>/src/data/README.md</code>.
+      </p>
+
+      <h2>Why we don't model "expected returns" as a single number</h2>
+      <p>
+        Two pension calculators can both assume "a 5% real return" and produce wildly
+        different results. The reason is that the same expected arithmetic return implies
+        very different <em>geometric</em> (compound) returns depending on volatility — the
+        well-known <strong>volatility drag</strong>:
+      </p>
+      <p>
+        Geometric return ≈ Arithmetic return − ½ × Variance
+      </p>
+      <p>
+        For UK equities with ~9% arithmetic mean and ~20% standard deviation, the
+        geometric mean is about 7% — a 2-percentage-point haircut every year, compounding
+        for decades. A calculator that quotes "5% real" without saying whether it's
+        arithmetic or geometric is, mathematically, ambiguous to the tune of hundreds of
+        thousands of pounds over a 30-year horizon.
+      </p>
+      <p>
+        Our simulator sidesteps this entirely because we never use a single-number expected
+        return — we sample real history. The output you see in the dataset card on the
+        right shows the geometric mean of the chosen asset mix after the fee you specified,
+        which is the right number to compare against other tools.
+      </p>
+
+      <h2>What about the State Pension, tax, and the Annual Allowance?</h2>
+      <p>
+        The <strong>State Pension</strong> is included as an optional flat real annuity
+        from age 67 (the current State Pension Age for anyone born after April 1960; check
+        your own date at <a
+          href="https://www.gov.uk/state-pension-age"
+          rel="nofollow noopener"
+          target="_blank">gov.uk/state-pension-age</a>). We use the full new State Pension
+        rate of £230.25/week as projected for 2026/27, equivalent to roughly
+        £11,973/year (DWP rates, April 2026). This assumes 35 qualifying NI years; check
+        your forecast at <a
+          href="https://www.gov.uk/check-state-pension"
+          rel="nofollow noopener"
+          target="_blank">gov.uk/check-state-pension</a>.
+      </p>
+      <p>
+        <strong>Tax on drawdown</strong> is <em>not</em> modelled — your target income is
+        treated as gross. In practice, 25% of your pot can typically be taken as a tax-free
+        lump sum (the Lump Sum Allowance, £268,275 from April 2024,
+        <a
+          href="https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual/ptm063300"
+          rel="nofollow noopener"
+          target="_blank">HMRC PTM063300</a>), with the remainder taxed at your marginal
+        rate. Modelling this properly requires the calculator also to know your other
+        income, which we keep out of scope here — use the <a href="/calculators/take-home">Take-Home calculator</a>
+        once it's live, or pair this with your accountant's spreadsheet.
+      </p>
+      <p>
+        The <strong>Annual Allowance</strong> for 2026/27 is £60,000 (HMRC
+        <a
+          href="https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual/ptm053100"
+          rel="nofollow noopener"
+          target="_blank">PTM053100</a>) — the maximum you can contribute across all pensions
+        in a year and still get full tax relief. The input slider caps you at this. Two
+        wrinkles the warnings panel will flag:
+      </p>
+      <ul>
+        <li>
+          <strong>Carry-forward</strong> of unused allowance from the three previous tax
+          years can let you contribute more than £60k in a single year — useful if you're
+          catching up.
+        </li>
+        <li>
+          <strong>The tapered Annual Allowance</strong> reduces the £60k by £1 for every £2
+          of <em>adjusted income</em> above £260,000, down to a floor of £10,000 (HMRC
+          <a
+            href="https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual/ptm057100"
+            rel="nofollow noopener"
+            target="_blank">PTM057100</a>). High earners need to compute their adjusted
+          income carefully before contributing.
+        </li>
+      </ul>
+
+      <h2>What to do if your probability of ruin is high</h2>
+      <p>
+        If the headline number is below ~80%, the plan is fragile. The levers that move it,
+        in roughly decreasing order of effectiveness:
+      </p>
+      <ol>
+        <li>
+          <strong>Reduce the target income.</strong> Sustainable withdrawal rates have a
+          steep cliff above ~4% real of the pot. Going from £30k/year to £25k/year on a
+          £600k pot is the difference between fragile and robust.
+        </li>
+        <li>
+          <strong>Increase contributions.</strong> Each extra £1,000/year for 30 years is
+          roughly £75,000–£100,000 of additional real pot in the median case.
+        </li>
+        <li>
+          <strong>Delay retirement by a few years.</strong> This is the single most powerful
+          lever, because it both (a) gives the pot more years to grow and (b) reduces the
+          number of years over which you have to draw from it. Two years of delay can shift
+          the probability of success by 10–15 percentage points.
+        </li>
+        <li>
+          <strong>Reduce fees.</strong> A 1% annual fee compounded over 30 years eats
+          roughly 20–25% of the final pot. The cheapest global tracker is 0.07–0.25%; the
+          difference between that and a 1.5% adviser-overlay is, plausibly, several extra
+          years of retirement income.
+        </li>
+        <li>
+          <strong>Adjust equity weight.</strong> Higher equity weight raises the median
+          outcome but widens the range — it doesn't unambiguously improve success
+          probability for income targets near the boundary. The optimum equity weight
+          depends on your tolerance for the bottom-decile outcome, not the median.
+        </li>
+      </ol>
+
+      <h2>What this calculator does not do (and why)</h2>
+      <ul>
+        <li>
+          <strong>It doesn't model variable withdrawal strategies</strong> (Guyton-Klinger
+          guardrails, the Bogleheads variable-percentage-withdrawal rule, dynamic
+          glide-paths). These can materially improve success rates and we plan to add them
+          in a future revision.
+        </li>
+        <li>
+          <strong>It doesn't model annuitisation.</strong> Buying an annuity at retirement
+          is a different problem — it removes longevity risk at the cost of giving up
+          upside.
+        </li>
+        <li>
+          <strong>It doesn't model the bond yield environment at the start of the
+          simulation.</strong> Block-bootstrap inherits the average historical bond
+          experience; in a low-real-yield starting environment the early years of any
+          gilt-heavy plan will likely underperform the historical average. This is a
+          known limitation of all bootstrap methods and a reason why some practitioners
+          prefer regime-conditioned simulation. The trade-off is added model complexity
+          and assumption sensitivity.
+        </li>
+        <li>
+          <strong>It doesn't model your specific tax position.</strong> Pension tax is
+          highly individual. Treat the calculator as a planning tool, not a tax advice
+          engine.
+        </li>
+      </ul>
+
+      <h2>Sources &amp; further reading</h2>
+      <ul>
+        <li>
+          <a
+            href="https://www.gov.uk/hmrc-internal-manuals/pensions-tax-manual"
+            rel="nofollow noopener"
+            target="_blank">HMRC Pensions Tax Manual</a> — definitive UK pension tax rules.
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/check-state-pension"
+            rel="nofollow noopener"
+            target="_blank">gov.uk State Pension forecast</a>
+        </li>
+        <li>
+          <a
+            href="https://www.handbook.fca.org.uk/handbook/COBS/13/Annex2.html"
+            rel="nofollow noopener"
+            target="_blank">FCA COBS 13 Annex 2</a> — the FCA's standardised projection
+          assumptions, useful if you want to compare this to your provider's statement.
+        </li>
+        <li>
+          <a
+            href="https://www.bankofengland.co.uk/statistics/research-datasets"
+            rel="nofollow noopener"
+            target="_blank">Bank of England Millennium of Macroeconomic Data</a> — UK CPI
+          and inflation series back to 1209.
+        </li>
+        <li>
+          <a
+            href="https://www.macrohistory.net/database/"
+            rel="nofollow noopener"
+            target="_blank">Jordà-Schularick-Taylor Macrohistory Database</a> — UK equity
+          and gilt total returns 1870–present.
+        </li>
+        <li>
+          <a
+            href="https://www.ubs.com/global/en/family-office-uhnw/reports/global-investment-returns-yearbook.html"
+            rel="nofollow noopener"
+            target="_blank">UBS Global Investment Returns Yearbook</a> — annual update of
+          the Dimson-Marsh-Staunton long-run returns dataset.
+        </li>
+      </ul>
+
+      <p class="text-sm text-[color:var(--color-ink-light)]">
+        This calculator runs entirely in your browser. We do not store, log or transmit
+        your inputs to any server. See the <a href="/disclaimer">disclaimer</a> for the
+        usual warnings about why a calculator is not a substitute for regulated financial
+        advice.
+      </p>
+    </div>
+  </section>
+</Layout>

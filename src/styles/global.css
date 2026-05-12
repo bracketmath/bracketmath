@@ -5,7 +5,8 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   --color-ink: oklch(0.18 0.02 250);
-  --color-ink-light: oklch(0.35 0.02 250);
+  /* darkened from 0.35 → 0.28 to hit WCAG AA 4.5:1 against the paper background */
+  --color-ink-light: oklch(0.28 0.02 250);
   --color-paper: oklch(0.99 0.005 90);
   --color-accent: oklch(0.55 0.18 250);
   --color-accent-soft: oklch(0.92 0.04 250);

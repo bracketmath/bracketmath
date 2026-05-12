@@ -20,7 +20,7 @@ import Layout from '../layouts/Layout.astro';
         BracketMath uses proper Monte Carlo simulation, joint tax optimisation, and sequence-of-returns risk
         — the same methods used by actual quants — to tell you what's <em>really</em> optimal for your situation.
       </p>
-      <div class="flex flex-col sm:flex-row justify-center gap-3">
+      <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-3">
         <a href="/calculators/salary-dividend-split"
            class="inline-block px-6 py-3 bg-[color:var(--color-accent)] text-white font-semibold rounded-lg no-underline hover:opacity-90 transition">
           Salary–Dividend Optimiser →
@@ -29,7 +29,12 @@ import Layout from '../layouts/Layout.astro';
            class="inline-block px-6 py-3 border border-[color:var(--color-rule)] text-[color:var(--color-ink)] font-semibold rounded-lg no-underline hover:bg-[color:var(--color-accent-soft)] transition">
           SIPP Optimiser →
         </a>
+        <a href="/calculators/take-home"
+           class="inline-block px-6 py-3 border border-[color:var(--color-rule)] text-[color:var(--color-ink)] font-semibold rounded-lg no-underline hover:bg-[color:var(--color-accent-soft)] transition">
+          Take-Home (IR35) →
+        </a>
       </div>
+
     </div>
   </section>
 
