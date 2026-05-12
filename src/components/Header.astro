@@ -1,0 +1,24 @@
+---
+const nav = [
+  { href: '/calculators/salary-dividend-split', label: 'Salary–Dividend' },
+  { href: '/calculators/sipp-optimiser', label: 'SIPP Optimiser' },
+  { href: '/calculators/take-home', label: 'Take-Home' },
+  { href: '/guides', label: 'Guides' },
+];
+---
+<header class="border-b border-[color:var(--color-rule)] bg-[color:var(--color-paper)]">
+  <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 text-[color:var(--color-ink)] no-underline">
+      <span class="font-mono text-lg font-semibold tracking-tight">[</span>
+      <span class="font-semibold text-lg tracking-tight">BracketMath</span>
+      <span class="font-mono text-lg font-semibold tracking-tight">]</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-6 text-sm">
+      {nav.map(item => (
+        <a href={item.href} class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

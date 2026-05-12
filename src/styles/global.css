@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-ink: oklch(0.18 0.02 250);
+  --color-ink-light: oklch(0.35 0.02 250);
+  --color-paper: oklch(0.99 0.005 90);
+  --color-accent: oklch(0.55 0.18 250);
+  --color-accent-soft: oklch(0.92 0.04 250);
+  --color-success: oklch(0.62 0.15 145);
+  --color-warning: oklch(0.72 0.18 75);
+  --color-danger: oklch(0.62 0.20 25);
+  --color-rule: oklch(0.90 0.005 250);
+}
+
+html {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-paper);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+}
+
+.prose {
+  max-width: 65ch;
+  line-height: 1.65;
+}
+
+.prose h1, .prose h2, .prose h3 {
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.prose h1 { font-size: 2.5rem; margin-top: 0; margin-bottom: 1rem; }
+.prose h2 { font-size: 1.75rem; margin-top: 2.5rem; margin-bottom: 1rem; }
+.prose h3 { font-size: 1.25rem; margin-top: 2rem; margin-bottom: 0.5rem; }
+
+.prose p { margin: 1rem 0; }
+.prose ul, .prose ol { padding-left: 1.25rem; margin: 1rem 0; }
+.prose li { margin: 0.25rem 0; }
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-accent-soft);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+}
+
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

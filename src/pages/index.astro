@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="BracketMath — Mathematically correct UK tax & pension calculators"
+  description="Optimise your Ltd Co salary–dividend split, SIPP contributions, and take-home pay with calculators that use proper Monte Carlo simulation and joint tax optimisation. Built for UK contractors and the self-employed."
+>
+  <section class="px-6 pt-20 pb-16">
+    <div class="mx-auto max-w-4xl text-center">
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-4">
+        UK tax year 2026/27 · For Ltd Co directors &amp; the self-employed
+      </p>
+      <h1 class="text-5xl md:text-6xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-6">
+        Most tax calculators are <span class="text-[color:var(--color-danger)]">mathematically wrong</span>.
+        <br />
+        Ours aren't.
+      </h1>
+      <p class="text-xl text-[color:var(--color-ink-light)] max-w-2xl mx-auto leading-relaxed mb-10">
+        Every "how much will I have at retirement" tool gives you a single number. The truth is a distribution.
+        BracketMath uses proper Monte Carlo simulation, joint tax optimisation, and sequence-of-returns risk
+        — the same methods used by actual quants — to tell you what's <em>really</em> optimal for your situation.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="/calculators/salary-dividend-split"
+           class="inline-block px-6 py-3 bg-[color:var(--color-accent)] text-white font-semibold rounded-lg no-underline hover:opacity-90 transition">
+          Salary–Dividend Optimiser →
+        </a>
+        <a href="/calculators/sipp-optimiser"
+           class="inline-block px-6 py-3 border border-[color:var(--color-rule)] text-[color:var(--color-ink)] font-semibold rounded-lg no-underline hover:bg-[color:var(--color-accent-soft)] transition">
+          SIPP Optimiser →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 bg-[color:var(--color-accent-soft)]/30">
+    <div class="mx-auto max-w-5xl">
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] text-center mb-8">
+        What everyone else gets wrong
+      </p>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg p-6 border border-[color:var(--color-rule)]">
+          <div class="font-mono text-3xl mb-3">µ</div>
+          <h3 class="font-semibold text-lg mb-2">Point estimates</h3>
+          <p class="text-sm text-[color:var(--color-ink-light)]">
+            Other sites tell you "you'll have £450k at retirement." That's the mean. Returns are random.
+            Your actual outcome is anywhere from £180k to £900k. We show you the <em>full distribution</em>.
+          </p>
+        </div>
+        <div class="bg-white rounded-lg p-6 border border-[color:var(--color-rule)]">
+          <div class="font-mono text-3xl mb-3">∇</div>
+          <h3 class="font-semibold text-lg mb-2">Greedy optimisation</h3>
+          <p class="text-sm text-[color:var(--color-ink-light)]">
+            Most calculators optimise salary <em>or</em> dividends <em>or</em> pension separately. The UK tax code
+            has interaction effects. We optimise jointly using Lagrangian methods.
+          </p>
+        </div>
+        <div class="bg-white rounded-lg p-6 border border-[color:var(--color-rule)]">
+          <div class="font-mono text-3xl mb-3">σ</div>
+          <h3 class="font-semibold text-lg mb-2">No volatility</h3>
+          <p class="text-sm text-[color:var(--color-ink-light)]">
+            They ignore sequence-of-returns risk — a crash in year 1 of retirement is catastrophically
+            different from year 20. We model 10,000 paths through your retirement.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-6 py-20">
+    <div class="mx-auto max-w-4xl prose">
+      <h2>Three calculators that will save you thousands</h2>
+
+      <h3>1. Salary–Dividend Split Optimiser</h3>
+      <p>
+        If you're a Ltd Co director, the wrong salary–dividend split costs you £500–£3,000 a year. Our
+        optimiser searches the joint space of (salary, dividend, pension contribution) and finds the
+        single point that minimises your effective tax rate across <em>both</em> corporation tax and personal tax.
+        It also tells you the gradient: how much each £1 of additional salary costs you in total tax.
+      </p>
+
+      <h3>2. SIPP Contribution Optimiser</h3>
+      <p>
+        How much should you actually contribute to your SIPP this tax year? We compute the answer using
+        Monte Carlo simulation over 10,000 future paths, modelling realistic asset returns with autocorrelation
+        and crash probability. Result: an optimal contribution plus a fan chart showing the 5th, 50th, and 95th
+        percentile of your retirement pot.
+      </p>
+
+      <h3>3. Take-Home Calculator (Inside vs Outside IR35)</h3>
+      <p>
+        The real net of any contract, factoring in VAT scheme, dividend tax, NI, corporation tax, and
+        employer NI rebate. Side-by-side inside vs outside IR35 comparison with the break-even day rate
+        explicitly shown.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-16 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-4xl prose">
+      <h2>Methodology, in one paragraph</h2>
+      <p>
+        Every calculation on this site uses the published HMRC rates for the 2026/27 tax year. Returns are
+        modelled using block-bootstrap resampling of historical UK equity and gilt returns from 1900–2024,
+        preserving the autocorrelation structure that destroys naive Monte Carlo. Optimisations use SciPy-style
+        bounded numerical methods on the joint tax function, not greedy single-variable searches. Calculations
+        run entirely in your browser — we don't store anything, ever.
+        Full methodology: <a href="/about">read the technical write-up →</a>
+      </p>
+    </div>
+  </section>
+</Layout>

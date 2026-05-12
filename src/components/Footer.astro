@@ -1,0 +1,46 @@
+---
+const year = new Date().getFullYear();
+---
+<footer class="border-t border-[color:var(--color-rule)] mt-24 py-12">
+  <div class="mx-auto max-w-6xl px-6 grid md:grid-cols-4 gap-8 text-sm">
+    <div>
+      <div class="flex items-center gap-1 mb-3">
+        <span class="font-mono font-semibold">[</span>
+        <span class="font-semibold">BracketMath</span>
+        <span class="font-mono font-semibold">]</span>
+      </div>
+      <p class="text-[color:var(--color-ink-light)]">
+        Mathematically correct UK tax &amp; pension calculators for the self-employed and Ltd Co directors.
+      </p>
+    </div>
+    <div>
+      <h4 class="font-semibold mb-3">Calculators</h4>
+      <ul class="space-y-2 text-[color:var(--color-ink-light)]">
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/calculators/salary-dividend-split">Salary–Dividend Split</a></li>
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/calculators/sipp-optimiser">SIPP Optimiser</a></li>
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/calculators/take-home">Take-Home Calculator</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-semibold mb-3">Guides</h4>
+      <ul class="space-y-2 text-[color:var(--color-ink-light)]">
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/guides/contractor-tax">UK Contractor Tax Guide</a></li>
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/guides/ltd-director">Ltd Co Director Playbook</a></li>
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/guides/sipp">Self-Employed SIPPs</a></li>
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/guides/ir35">IR35 in 2026</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-semibold mb-3">About</h4>
+      <ul class="space-y-2 text-[color:var(--color-ink-light)]">
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/about">Methodology</a></li>
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/disclaimer">Disclaimer</a></li>
+        <li><a class="hover:text-[color:var(--color-accent)]" href="/privacy">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="mx-auto max-w-6xl px-6 mt-10 pt-6 border-t border-[color:var(--color-rule)] text-xs text-[color:var(--color-ink-light)] flex flex-col md:flex-row justify-between gap-2">
+    <p>© {year} BracketMath. Information only — not financial advice. UK tax year 2026/27.</p>
+    <p>Calculations use HMRC published rates &amp; thresholds. Returns modelled via Monte Carlo simulation.</p>
+  </div>
+</footer>
