@@ -1,0 +1,151 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SalaryDividendSplit from '../../components/calculators/SalaryDividendSplit.tsx';
+---
+<Layout
+  title="Salary–Dividend Split Optimiser (2026/27)"
+  description="Free interactive calculator for UK Ltd Co directors. Finds the salary, dividend & pension split that minimises your combined tax bill — corporation tax, NI, income tax and dividend tax — using a proper joint optimisation, not a rule of thumb."
+>
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6">
+        <a
+          href="/"
+          class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline"
+          >Home</a
+        >
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span class="text-[color:var(--color-ink-light)]">Calculators</span>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>Salary–Dividend Split</span>
+      </nav>
+
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        UK Tax Year 2026/27 · Ltd Co directors (rUK)
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        Salary–Dividend Split Optimiser
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] max-w-3xl leading-relaxed">
+        Find the salary, dividend and pension-contribution combination that minimises your
+        combined tax bill across <em>corporation tax, employer NI, employee NI, income tax,
+        and dividend tax</em> — solved as one joint problem, not five separate ones.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 pb-16">
+    <div class="mx-auto max-w-6xl">
+      <SalaryDividendSplit client:only="react">
+        <!-- Fallback shown until React hydrates (no-JS users see this too). -->
+        <div slot="fallback" class="grid lg:grid-cols-[360px_1fr] gap-8">
+          <div class="bg-white rounded-lg border border-[color:var(--color-rule)] p-6 min-h-[400px]">
+            <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)]">
+              Loading inputs…
+            </p>
+          </div>
+          <div class="bg-white rounded-lg border border-[color:var(--color-rule)] p-6 min-h-[400px]">
+            <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)]">
+              The calculator requires JavaScript. If nothing appears, please enable it for this page.
+            </p>
+          </div>
+        </div>
+      </SalaryDividendSplit>
+    </div>
+  </section>
+
+  <section class="px-6 py-16 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+      <h2>How it works</h2>
+      <p>
+        The calculator runs a two-dimensional grid search over (salary, pension contribution).
+        For every combination it computes the full chain:
+      </p>
+      <ol>
+        <li>Employer NI on the salary (15% above £5,000 ST).</li>
+        <li>Pre-CT profit = company profit − salary − employer NI − pension contribution.</li>
+        <li>
+          Corporation tax on the pre-CT profit, including the marginal-relief band between
+          £50k and £250k where the effective rate climbs from 19% to 25%.
+        </li>
+        <li>The remainder is paid as dividend (max-extraction model).</li>
+        <li>
+          Personal tax on the salary using the rUK bands, with the personal allowance
+          tapered against <em>total</em> income (salary + dividends) above £100k.
+        </li>
+        <li>
+          Dividend tax stacked on top of the salary, at 8.75% / 33.75% / 39.35% in the
+          basic / higher / additional bands, with the £500 allowance applied at the
+          lowest-taxed slice of the dividend.
+        </li>
+        <li>Employee NI on the salary (8% main band, 2% above £50,270).</li>
+      </ol>
+      <p>
+        Net wealth is then defined as net cash + (pension × pension weight). The slider in
+        the sidebar lets you adjust how much you value £1 in a pension vs £1 of cash today.
+        A weight of 0 ignores pension entirely (purely cash-maximising); a weight of 1.0
+        treats them as equally valuable.
+      </p>
+
+      <h2>Why &quot;just pay £12,570 then dividend the rest&quot; isn&apos;t always right</h2>
+      <p>
+        The classic accountant's rule of thumb works well for profits between roughly £40k
+        and £80k. It breaks down in three places:
+      </p>
+      <ul>
+        <li>
+          <strong>The £100k personal-allowance taper</strong> creates a 60% effective marginal
+          rate. Pension contributions can dodge this entirely.
+        </li>
+        <li>
+          <strong>The £50k–£250k marginal-relief band</strong> means corporation tax has a
+          26.5% effective marginal rate on profits in that range. Salary and pension reduce
+          taxable profit and are unusually efficient there.
+        </li>
+        <li>
+          <strong>The £125,140 additional-rate threshold</strong> bumps dividend tax to 39.35%.
+          For directors above this level, paying higher salary (lower marginal NI than dividend
+          tax) starts to win.
+        </li>
+      </ul>
+
+      <h2>Sources</h2>
+      <ul>
+        <li>
+          <a
+            href="https://www.gov.uk/government/publications/rates-and-allowances-income-tax/income-tax-rates-and-allowances-current-and-past"
+            rel="nofollow noopener"
+            target="_blank">HMRC income tax rates and allowances</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/government/publications/rates-and-allowances-national-insurance-contributions"
+            rel="nofollow noopener"
+            target="_blank">HMRC National Insurance contributions</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/government/publications/rates-and-allowances-corporation-tax"
+            rel="nofollow noopener"
+            target="_blank">HMRC Corporation Tax rates</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.gov.uk/tax-on-dividends"
+            rel="nofollow noopener"
+            target="_blank">HMRC dividend tax</a
+          >
+        </li>
+      </ul>
+
+      <p class="text-sm text-[color:var(--color-ink-light)]">
+        This calculator runs entirely in your browser. We do not store, log or transmit your
+        inputs to any server. See the <a href="/disclaimer">disclaimer</a> for the usual
+        warnings about why a calculator is not a substitute for an accountant.
+      </p>
+    </div>
+  </section>
+</Layout>
