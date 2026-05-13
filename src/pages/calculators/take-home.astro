@@ -1,11 +1,43 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
 import TakeHome from '../../components/calculators/TakeHome.tsx';
+
+const url = 'https://bracketmath.co.uk/calculators/take-home';
 ---
 <Layout
   title="Contractor Take-Home Calculator: Inside vs Outside IR35 (2026/27)"
   description="Free interactive UK contractor calculator. Compares Inside-IR35 (umbrella PAYE) and Outside-IR35 (Ltd Co) take-home, side by side, using the full HMRC tax stack — corporation tax, employer NI, employee NI, income tax, dividend tax, salary sacrifice, and the £100k personal-allowance taper. Shows the day-rate break-even number that contractors actually care about."
+  canonical={url}
 >
+  <JsonLd
+    article={{
+      headline: 'Contractor Take-Home Calculator: Inside vs Outside IR35 (2026/27)',
+      description: 'A side-by-side inside-IR35 (umbrella PAYE) vs outside-IR35 (Ltd Co) contractor take-home calculator that drives the outside-IR35 route through the joint salary-dividend optimiser and reports the break-even inside-IR35 day rate by bisection.',
+      datePublished: '2026-04-06',
+      url,
+      keywords: ['ir35 calculator', 'contractor take home', 'umbrella vs ltd company', 'break-even day rate', 'inside vs outside ir35'],
+    }}
+    howTo={{
+      name: 'How to use the take-home calculator',
+      description: 'Five steps to compare inside-IR35 and outside-IR35 contractor take-home and find the break-even day rate.',
+      totalTime: 'PT2M',
+      steps: [
+        { name: 'Enter your day rate and billable days', text: 'Day rate is your gross contract rate per day. Billable days is the realistic number of working days you expect to invoice per year (typical full-time contractor: 220 days, allowing for holiday, sickness and admin).' },
+        { name: 'Enter business expenses and umbrella fee', text: 'Business expenses (Ltd Co route) — insurance, accountancy, software, training. Umbrella fee (inside-IR35 route) — typical £25-£35/week or £1,300-£1,800/year.' },
+        { name: 'Set your pension contribution percentage', text: 'Pension contribution as a percentage of gross contract value. Inside-IR35 this is applied via salary sacrifice; outside-IR35 it is paid as an employer contribution from the Ltd Co.' },
+        { name: 'Enter age and any other income', text: 'Age affects pension annual allowance assumptions. Other income (rental, other employment) stacks below the contract income in the personal tax calculation.' },
+        { name: 'Read the comparison and break-even rate', text: 'The result shows net cash and net wealth under both routes, with full itemised deductions. The break-even inside-IR35 day rate is the rate at which the inside-IR35 route would match the outside-IR35 net cash — typically 20%-35% above the outside-IR35 rate.' },
+      ],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Calculators', url: 'https://bracketmath.co.uk/calculators' },
+      { name: 'Take-Home', url },
+    ]}
+  />
+
+
   <section class="px-6 pt-12 pb-6">
     <div class="mx-auto max-w-6xl">
       <nav class="text-sm mb-6" aria-label="Breadcrumb">

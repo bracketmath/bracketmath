@@ -1,0 +1,106 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+
+const guides = [
+  {
+    href: '/guides/uk-contractor-tax',
+    title: 'The complete UK contractor tax optimisation guide (2026/27)',
+    desc: 'Sole trader vs umbrella vs Ltd Co, worked at every income band from £30k profit to £200k+, with the optimal extraction plan computed by the BracketMath joint optimiser at each step.',
+  },
+  {
+    href: '/guides/ltd-company-director-tax',
+    title: "The Ltd Co director's playbook (2026/27)",
+    desc: 'Salary at LEL, PT, Secondary Threshold or above — when each is optimal. The £100k Personal Allowance taper, the £50k–£250k corporation-tax marginal-relief band, dividend stacking, and pension contributions as the master lever.',
+  },
+  {
+    href: '/guides/self-employed-pensions',
+    title: 'Self-employed pensions, mathematically: SIPP vs SSAS vs stakeholder',
+    desc: 'Annual Allowance, taper, relief at source vs net pay, employer contributions from a Ltd Co, the abolition of the Lifetime Allowance, decumulation strategy, and a worked Monte Carlo over 125 years of UK return history.',
+  },
+  {
+    href: '/guides/ir35-explained',
+    title: 'IR35 in 2026: inside, outside, and the maths',
+    desc: 'The off-payroll working rules in plain English (ITEPA 2003 Chapter 10), Status Determination Statement, CEST, the three Ready Mixed Concrete tests, and the financial difference at typical day rates with the break-even computed by bisection.',
+  },
+  {
+    href: '/guides/optimal-uk-retirement-portfolio',
+    title: 'The mathematically optimal UK retirement portfolio for a self-employed person',
+    desc: 'Equity / gilt allocation by age, sequence-of-returns risk, the 4% rule\'s problems in a UK context, accumulation glidepath, decumulation strategy, and the empirical safe withdrawal rate from 125 years of UK history.',
+  },
+];
+---
+<Layout
+  title="Guides — BracketMath"
+  description="Long-form, methodology-led guides to UK contractor tax, Ltd Co director extraction, self-employed pensions, IR35, and the optimal UK retirement portfolio. Every figure cited or computed by an engine — no rule-of-thumb estimates."
+>
+  <JsonLd
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Guides', url: 'https://bracketmath.co.uk/guides' },
+    ]}
+  />
+  <section class="px-6 pt-16 pb-10">
+    <div class="mx-auto max-w-3xl">
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-4">
+        Guides · Methodology-led
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-6">
+        Long-form guides to UK personal finance, mathematically.
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] leading-relaxed">
+        Five pillar guides covering the decisions that move the most money for UK contractors,
+        Ltd Co directors and the self-employed. Every numeric claim on every page is either a
+        direct citation of an HMRC / FCA / ONS / DWP source, or a result computed at build
+        time by one of the calculators on this site. There are no rule-of-thumb estimates and
+        no fabricated statistics anywhere on the pages below.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-10 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl grid gap-6">
+      {guides.map((g) => (
+        <a
+          href={g.href}
+          class="block bg-white rounded-lg border border-[color:var(--color-rule)] p-6 no-underline hover:border-[color:var(--color-accent)] transition-colors"
+        >
+          <h2 class="text-xl font-semibold tracking-tight text-[color:var(--color-ink)] mb-2">
+            {g.title}
+          </h2>
+          <p class="text-[color:var(--color-ink-light)] leading-relaxed">{g.desc}</p>
+          <p class="font-mono text-sm text-[color:var(--color-accent)] mt-3">
+            Read the guide →
+          </p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="px-6 py-12 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+      <h2>How these guides are written</h2>
+      <p>
+        Every guide on BracketMath is built around three editorial commitments.
+        First, every numeric claim is sourced — either to HMRC, the FCA, the ONS, the DWP, the
+        OBR or a peer-reviewed paper — or it is the output of one of the calculators that runs
+        on this site. We do not write "most contractors save 30%". We write "for a £75,000
+        Ltd Co profit at 2026/27 rates, the BracketMath joint optimiser yields £X more than
+        the £12,570-salary-plus-max-dividend rule of thumb" and we link directly to the
+        calculator that produced X.
+      </p>
+      <p>
+        Second, the guides exist to be read alongside the calculators. Each pillar embeds a
+        preview card that links into the live calculator pre-populated with a representative
+        scenario, so you can run the numbers for yourself before committing to a decision.
+      </p>
+      <p>
+        Third, none of this is financial advice. UK tax law and pension legislation are
+        unusually full of edge cases, and every individual's situation is different — read the
+        full <a href="/disclaimer">disclaimer</a> before relying on any output, and consult a
+        chartered accountant or FCA-authorised adviser for any decision worth more than £5,000
+        in tax or £25,000 in pension wealth.
+      </p>
+    </div>
+  </section>
+</Layout>

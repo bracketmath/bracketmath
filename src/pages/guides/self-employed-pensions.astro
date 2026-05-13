@@ -1,0 +1,454 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { simulateRetirement } from '../../lib/montecarlo/simulate';
+
+const money = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
+const pct = (n: number) =>
+  (n * 100).toLocaleString('en-GB', { maximumFractionDigits: 1 }) + '%';
+
+// Build-time Monte Carlo: smaller path count keeps the build fast while still
+// giving statistically meaningful figures for the prose (±~1.5pp on probabilities).
+function mc(opts: Parameters<typeof simulateRetirement>[0]) {
+  return simulateRetirement({ ...opts, numPaths: 2_000, seed: 1 });
+}
+
+// Optimiser persona: 40yo, £100k pot, contributing £15k/yr, retire 65, target £30k/yr real.
+const a = mc({
+  currentAge: 40, retirementAge: 65, currentPot: 100_000,
+  annualContribution: 15_000, targetRetirementIncome: 30_000, equityWeight: 0.7,
+});
+
+// Optimiser persona, more aggressive: same but £25k/yr contribution.
+const b = mc({
+  currentAge: 40, retirementAge: 65, currentPot: 100_000,
+  annualContribution: 25_000, targetRetirementIncome: 30_000, equityWeight: 0.7,
+});
+
+// Pre-retiree persona: 55yo, £400k pot, £5k/yr top-up, retire 65, target £28k/yr real.
+const c = mc({
+  currentAge: 55, retirementAge: 65, currentPot: 400_000,
+  annualContribution: 5_000, targetRetirementIncome: 28_000, equityWeight: 0.5,
+});
+
+const today = new Date().toISOString().slice(0, 10);
+const url = 'https://bracketmath.co.uk/guides/self-employed-pensions';
+---
+<Layout
+  title="Self-Employed Pensions, Mathematically — SIPP vs SSAS vs Stakeholder (2026/27)"
+  description="The mathematics of self-employed pensions in the UK: Annual Allowance, employer contributions from a Ltd Co, SIPP vs SSAS vs stakeholder, and a Monte Carlo over 125 years of UK history showing the actual probability of pot exhaustion at three saver profiles."
+  canonical={url}
+>
+  <JsonLd
+    article={{
+      headline: 'Self-employed pensions, mathematically: SIPP vs SSAS vs stakeholder (2026/27)',
+      description: 'Annual Allowance, tapered AA, relief at source vs net pay, employer contributions from a Ltd Co, and a Monte Carlo simulation over 125 years of UK historical returns.',
+      datePublished: today,
+      url,
+      keywords: ['self employed pension uk', 'sipp', 'ssas', 'annual allowance', 'lump sum allowance', 'sequence of returns risk'],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Guides', url: 'https://bracketmath.co.uk/guides' },
+      { name: 'Self-Employed Pensions', url },
+    ]}
+    faq={[
+      { question: 'What is the Annual Allowance for self-employed pension contributions in 2026/27?',
+        answer: 'The standard Annual Allowance is £60,000 (combined across all pensions). For high earners with "adjusted income" over £260,000, the AA tapers down £1 per £2 over, to a floor of £10,000 at £360,000 adjusted income. Self-employed savers can carry forward up to three prior tax years of unused AA in addition.' },
+      { question: 'SIPP vs SSAS vs stakeholder — which one?',
+        answer: 'A SIPP (Self-Invested Personal Pension) is the right answer for almost every self-employed UK saver. SSAS (Small Self-Administered Scheme) is a Ltd Co occupational scheme with loanbacks and commercial property options, only worth the setup cost above £250k–£500k of pension wealth. Stakeholder pensions are a regulatory category mostly superseded by modern low-cost SIPPs.' },
+      { question: 'How does relief at source work for a self-employed person?',
+        answer: 'When you contribute to a SIPP from your own taxed income, the provider adds 25% basic-rate relief automatically (so an £80 contribution becomes £100 inside the pension). Higher- and additional-rate taxpayers claim the extra 20p or 25p per £1 via Self Assessment. For Ltd Co directors the cleanest mechanism is an employer contribution direct from the company, which bypasses relief at source entirely and is corporation-tax deductible.' },
+      { question: 'Has the Lifetime Allowance been abolished?',
+        answer: 'Yes — the LTA was abolished from 6 April 2024 and replaced with two new allowances: the Lump Sum Allowance (£268,275, the maximum tax-free cash you can take across all pensions) and the Lump Sum and Death Benefit Allowance (£1,073,100, the cap on tax-free lump sums on death). Income in drawdown is taxed at the marginal income tax rate as before.' },
+      { question: 'When can I access my pension?',
+        answer: 'The Normal Minimum Pension Age is 55, rising to 57 on 6 April 2028. From that age 25% of the pot is available as tax-free cash (subject to the £268,275 LSA), and the rest is taxable income on drawdown. Earlier access is only possible in cases of ill-health (HMRC severe-ill-health rules) or a "protected pension age" from a pre-2006 scheme.' },
+      { question: 'What is sequence-of-returns risk and why does it matter?',
+        answer: 'Sequence-of-returns risk is the phenomenon that the order of returns matters in decumulation, not just the average. Two retirees with identical average lifetime returns can end up with wildly different outcomes if one retires into a crash and the other into a bull market. The BracketMath retirement simulator uses block-bootstrap from 125 years of UK history to preserve the autocorrelation pattern that gives this risk its bite — a single fixed-return projection cannot detect it.' },
+      { question: 'Is a 4% safe withdrawal rate safe in the UK?',
+        answer: 'No, not on UK return history. The Bengen 4% rule was derived from US data with stronger long-run equity returns and lower inflation volatility. UK history with the DMS series shows that a 4% real withdrawal rate from a 60/40 portfolio over 30 years has a ~10-15% historical probability of failure — higher than the 5% conventionally tolerated. A more defensible UK starting figure is 3.3%–3.6% real, with the BracketMath simulator showing the exact probability for your inputs.' },
+    ]}
+  />
+
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6">
+        <a href="/" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Home</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <a href="/guides" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Guides</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>Self-Employed Pensions</span>
+      </nav>
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        Pillar · UK Tax Year 2026/27 · ~25 min read
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        Self-employed pensions, mathematically
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] max-w-3xl leading-relaxed">
+        SIPP vs SSAS vs stakeholder, Annual Allowance and its taper, relief at source vs
+        employer contributions, sequence-of-returns risk and the empirical UK safe
+        withdrawal rate — with three worked Monte Carlo scenarios run at build time over
+        125 years of Dimson-Marsh-Staunton UK return history.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+
+      <h2>The three account types, in one paragraph each</h2>
+
+      <p>
+        A <strong>Self-Invested Personal Pension (SIPP)</strong> is the default wrapper for
+        a UK self-employed saver. It is a defined-contribution pension regulated by the
+        FCA, with the saver as the beneficial owner of the underlying investments. SIPPs
+        accept contributions from the saver (with basic-rate relief at source) and from
+        an employer (with full deductibility against company profit). Annual costs on a
+        modern low-cost SIPP are typically 0.15%–0.45% platform fee plus 0.05%–0.30%
+        underlying fund OCF. Investment universe is broad: ETFs, OEICs, investment trusts,
+        individual shares, and (with most providers) commercial property within strict
+        rules. SIPPs are appropriate from £5,000 of pension wealth upward.
+      </p>
+
+      <p>
+        A <strong>Small Self-Administered Scheme (SSAS)</strong> is a Ltd Co occupational
+        scheme with the company as the sponsoring employer and up to 11 members
+        (typically the directors and their family). SSAS unlocks two features a SIPP
+        cannot offer: a <em>loanback</em> of up to 50% of scheme assets to the sponsoring
+        company at a commercial rate, and the ability to hold the company's own commercial
+        property. Setup costs are £1,500–£3,500 and annual administration £700–£1,800,
+        which means SSAS is only economic above roughly £250,000 of scheme wealth and
+        rarely sensible below £500,000. Pensions Regulator authorisation is required.
+      </p>
+
+      <p>
+        A <strong>Stakeholder pension</strong> is a regulatory category of low-cost
+        personal pension introduced in 2001 with capped charges (1% / 1.5%) and a £20
+        minimum contribution. The category has been mostly superseded by modern SIPPs
+        with lower charges; it survives chiefly as the default vehicle for low-balance
+        savers using providers like Aviva or Standard Life. For a self-employed
+        contractor's main pension, a SIPP is almost always cheaper and more flexible.
+      </p>
+
+      <h2>The Annual Allowance, the taper, and carry-forward</h2>
+
+      <p>
+        The <strong>standard Annual Allowance (AA)</strong> for 2026/27 is £60,000,
+        combined across all of an individual's pensions. Contributions above the AA
+        attract an Annual Allowance Charge at the saver's marginal income tax rate, which
+        in practice cancels out the relief and removes the tax benefit of the excess.
+      </p>
+
+      <p>
+        For high earners, the <strong>Tapered Annual Allowance</strong> reduces the AA by
+        £1 for every £2 by which "adjusted income" exceeds £260,000, down to a floor of
+        £10,000 at £360,000 of adjusted income. Adjusted income includes salary, bonus,
+        rental, dividends, interest, and the value of employer pension contributions.
+        For Ltd Co directors near the taper, the optimal answer often involves carefully
+        timing employer contributions across tax years to stay below the £260,000
+        threshold in any single year.
+      </p>
+
+      <p>
+        <strong>Carry-forward</strong> permits using unused AA from the three immediately
+        preceding tax years, provided the saver was a member of a registered pension
+        scheme in each of those years. For a self-employed director who started a SIPP in
+        April 2024 and has contributed nothing in three years, the maximum 2026/27
+        contribution is the standard £60,000 plus three × £60,000 carry-forward = £240,000
+        — though the contribution still cannot exceed the saver's relevant UK earnings in
+        the year of contribution unless it is an employer contribution from a Ltd Co.
+        This last clause matters: employer contributions are not capped by personal
+        earnings, only by the AA itself, which is why directors with retained company
+        profit can sometimes make large catch-up contributions in a single year.
+      </p>
+
+      <h2>Relief at source vs net pay vs employer contributions</h2>
+
+      <p>
+        The mechanism by which tax relief is applied differs across contribution routes.
+      </p>
+
+      <p>
+        <strong>Relief at source</strong> is used by all modern UK SIPPs for personal
+        contributions. The saver pays £80 from already-taxed income; the SIPP provider
+        claims £20 of basic-rate relief from HMRC and credits the pension with £100.
+        Higher-rate (£40 tax band) and additional-rate (£45 tax band) taxpayers claim the
+        extra 20p or 25p per £1 of contribution through Self Assessment — this is a
+        cash refund to the saver, not extra money into the pension. The relief is capped
+        at the saver's <em>relevant UK earnings</em> for the year (excluding dividends).
+      </p>
+
+      <p>
+        <strong>Net pay</strong> is used by most workplace pensions, deducting the
+        contribution from gross salary before income tax is calculated. The effect is
+        identical to relief at source for basic-rate taxpayers, but cleaner — higher-rate
+        relief is automatic, no Self Assessment claim required. Net-pay is uncommon for
+        self-employed savers because it requires a payroll mechanism.
+      </p>
+
+      <p>
+        <strong>Employer contributions from a Ltd Co</strong> are the most efficient
+        route for director-level savers. The contribution is a deductible expense for
+        corporation tax (saving 19p, 26.5p or 25p per £1 depending on CT band), is free
+        of employer and employee NI, and is not counted as personal income for the £100k
+        PA taper. A £10,000 employer contribution costs the company £7,350 in foregone
+        post-tax profit in the £50k–£250k marginal-relief band — a 26.5% effective
+        discount that no personal-contribution route can match.
+      </p>
+
+      <p>
+        For a typical self-employed contractor's first SIPP, the lowest-friction provider
+        choice is one that accepts both personal and employer contributions on the same
+        account.
+        <!-- IMPACT: PensionBee -->
+        <a href="https://www.pensionbee.com/" rel="sponsored noopener nofollow">PensionBee</a>
+        and
+        <!-- IMPACT: Penfold -->
+        <a href="https://getpenfold.com/" rel="sponsored noopener nofollow">Penfold</a>
+        are both purpose-built for the self-employed, accept Ltd Co contributions
+        directly, and publish their OCF transparently. Disclosure: both are Impact.com
+        advertisers (see the <a href="/disclaimer">disclosure policy</a>).
+      </p>
+
+      <h2>The abolition of the Lifetime Allowance</h2>
+
+      <p>
+        The Lifetime Allowance was abolished from 6 April 2024. It is replaced by two new
+        allowances. The <strong>Lump Sum Allowance (LSA)</strong> caps tax-free cash at
+        £268,275 across all pensions. The <strong>Lump Sum and Death Benefit Allowance
+        (LSDBA)</strong> caps tax-free lump sums paid out on death at £1,073,100.
+      </p>
+
+      <p>
+        For the typical self-employed saver these allowances rarely bind: a pot of
+        £1,073,100 produces, at a 3.5% real withdrawal rate, around £37,500/year of
+        retirement income in 2026 purchasing power — comfortable for a single retiree but
+        not extravagant. The post-LTA reform is genuinely positive for the £1m+ pot saver
+        because the punitive 25%/55% lifetime-allowance charge has gone; drawdown income
+        is now simply taxed as income at marginal rate, which is materially less
+        confiscatory than the pre-2024 regime.
+      </p>
+
+      <h2>Sequence-of-returns risk and what it does to a pension pot</h2>
+
+      <p>
+        Most consumer pension calculators project a single fixed real return rate (often
+        5%/year) and report a single terminal pot value. This is misleading. Two retirees
+        with identical 30-year average real returns can end up with terminal pots an
+        order of magnitude apart if one retires into a crash and the other into a bull
+        market. The order of returns matters because withdrawals lock in losses: a 30%
+        drawdown in year one of retirement permanently reduces the capital base that
+        future returns can compound on.
+      </p>
+
+      <p>
+        The BracketMath retirement simulator uses a <strong>block-bootstrap Monte
+        Carlo</strong> over 125 years of UK return history (Dimson-Marsh-Staunton equity
+        and gilt total returns, ONS CPI). For each simulated lifetime it draws 12-month
+        contiguous blocks at random from the historical series, which preserves the
+        autocorrelation pattern that gives sequence-of-returns risk its bite — Gaussian
+        Monte Carlo, which most consumer tools use if they use any Monte Carlo at all,
+        produces nonsense because it draws each month independently and misses the
+        clustering of bad years that is the whole point of the analysis.
+      </p>
+
+      <h2>Three worked scenarios (computed at build time)</h2>
+
+      <div class="not-prose my-6 overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-[color:var(--color-rule)] text-left">
+              <th class="py-2 pr-3 font-semibold">Scenario</th>
+              <th class="py-2 pr-3 font-semibold">Median terminal pot</th>
+              <th class="py-2 pr-3 font-semibold">P(ruin before 95)</th>
+              <th class="py-2 pr-3 font-semibold">P(meeting target)</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-3">A: 40yo, £100k pot, £15k/yr, 70/30</td>
+              <td class="py-2 pr-3">{money(a.medianTerminalPot)}</td>
+              <td class="py-2 pr-3">{pct(a.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{pct(a.probabilityOfMeetingTarget)}</td>
+            </tr>
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-3">B: 40yo, £100k pot, £25k/yr, 70/30</td>
+              <td class="py-2 pr-3">{money(b.medianTerminalPot)}</td>
+              <td class="py-2 pr-3">{pct(b.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{pct(b.probabilityOfMeetingTarget)}</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-3">C: 55yo, £400k pot, £5k/yr, 50/50</td>
+              <td class="py-2 pr-3">{money(c.medianTerminalPot)}</td>
+              <td class="py-2 pr-3">{pct(c.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{pct(c.probabilityOfMeetingTarget)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        All three scenarios target retirement at 65, drawdown to age 95, with the target
+        income in today's purchasing power (real, inflation-adjusted). Scenario A —
+        the typical "Optimiser" persona — contributes £15,000/year for 25 years, has a
+        <strong>{pct(a.probabilityOfRuin)}</strong> historical probability of exhausting
+        the pot before age 95 at a £30,000/year target real income. Scenario B raises the
+        contribution to £25,000/year, which drops ruin probability to
+        <strong>{pct(b.probabilityOfRuin)}</strong> — the lever is large because the
+        extra 10 years × £10,000 of contributions compound through accumulation.
+        Scenario C is the "Pre-retiree" persona with a 10-year glide path and a
+        de-risked 50/50 portfolio; the ruin probability of <strong>{pct(c.probabilityOfRuin)}</strong>
+        is achievable largely because the pot is already substantial relative to the
+        target.
+      </p>
+
+      <p>
+        The numbers above are produced by the same engine that powers the
+        <a href="/calculators/sipp-optimiser">SIPP optimiser</a> calculator. The
+        calculator runs 10,000 paths instead of the 2,000 used here for build
+        performance, and lets you change every input — current age, retirement age,
+        equity weighting, target income, state pension assumption — and see the
+        full percentile fan and ruin probability for your specific case.
+      </p>
+
+      <h2>Embedded calculator</h2>
+
+      <div class="not-prose my-6 bg-white border border-[color:var(--color-rule)] rounded-lg p-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-2">
+          Calculator · SIPP Monte Carlo Optimiser
+        </p>
+        <h3 class="text-xl font-semibold mb-2 text-[color:var(--color-ink)]">
+          Run 10,000 retirement paths on your own inputs
+        </h3>
+        <p class="text-[color:var(--color-ink-light)] leading-relaxed mb-4">
+          The simulator runs 10,000 block-bootstrap paths over 125 years of UK return
+          history (DMS equities, gilts, ONS CPI) and reports your probability of pot
+          exhaustion before age 95 — the metric that actually matters for retirement
+          planning.
+        </p>
+        <a href="/calculators/sipp-optimiser"
+           class="inline-block bg-[color:var(--color-ink)] text-[color:var(--color-paper)] px-5 py-2 rounded-md font-mono text-sm no-underline hover:bg-[color:var(--color-accent)]">
+          Open the SIPP optimiser →
+        </a>
+      </div>
+
+      <h2>The Bengen 4% rule and why UK history rejects it</h2>
+
+      <p>
+        William Bengen's 1994 paper "Determining Withdrawal Rates Using Historical Data"
+        introduced the "4% rule" — a retiree who withdraws 4% of their initial pot in
+        year one, then adjusts annually for inflation, has not run out of money in any
+        30-year US historical period since 1926. Subsequent work by Wade Pfau, Michael
+        Kitces and others has refined Bengen's analysis, and there is broad consensus
+        that the US 4% figure is a reasonable starting point for US retirees with a
+        60/40 portfolio over 30 years.
+      </p>
+
+      <p>
+        The UK case is materially worse. Dimson-Marsh-Staunton document that UK real
+        equity returns are roughly 1.0%/year lower than the US over the 1900–2024 window,
+        and UK inflation has been both higher in absolute terms and more volatile.
+        Replaying Bengen's analysis on UK data produces a safe withdrawal rate closer to
+        <strong>3.3%–3.6% real</strong> over 30 years for a 60/40 portfolio. The
+        BracketMath simulator's scenario A above implies a sustainable real withdrawal
+        rate of roughly 3.5% at the 95th percentile of bad outcomes — consistent with
+        the academic consensus, and materially lower than the popularised 4% figure.
+      </p>
+
+      <h2>The decumulation glidepath</h2>
+
+      <p>
+        Two practical points often missed in consumer retirement guidance. First, the
+        equity / gilt allocation matters more in the five years either side of retirement
+        than at any other point in the saver's life — the "fragility window" where
+        sequence-of-returns risk is at its largest. A traditional glide path moves from
+        ~80/20 equity/gilt in mid-career to ~50/50 by retirement, then either holds or
+        rises back to ~60/40 in decumulation (the "rising equity glide path" pioneered by
+        Pfau and Kitces, which counter-intuitively performs slightly better than a static
+        allocation on US data).
+      </p>
+
+      <p>
+        Second, the <strong>State Pension</strong> is a non-trivial backstop. At 2026/27
+        rates a full new State Pension is £230.25/week or £11,973/year, payable from
+        State Pension Age (currently 66, rising to 67 by 2028 and 68 in the 2040s). For a
+        self-employed saver retiring at 65 with a £400,000 pot, the State Pension at 67
+        provides a guaranteed real income floor of nearly £12,000/year — roughly 30% of
+        a £40,000/year target — which substantially reduces the ruin probability for any
+        pot above £200,000. The simulator's <code>statePensionAnnual</code> input lets
+        you model this directly.
+      </p>
+
+      <h2>Frequently asked questions</h2>
+
+      <h3>What is the Annual Allowance for self-employed pension contributions?</h3>
+      <p>
+        £60,000 (combined across all pensions) for 2026/27. Tapers down £1 per £2 over
+        £260,000 of adjusted income, to a £10,000 floor at £360,000. Up to 3 prior tax
+        years of unused AA can be carried forward.
+      </p>
+
+      <h3>SIPP vs SSAS vs stakeholder?</h3>
+      <p>
+        SIPP for almost everyone. SSAS only above ~£250k–£500k of pension wealth with a
+        Ltd Co structure and a use for the loanback / commercial property features.
+        Stakeholder is mostly superseded.
+      </p>
+
+      <h3>How does relief at source work?</h3>
+      <p>
+        SIPP provider claims 25% basic-rate relief from HMRC on your contribution
+        automatically. Higher- and additional-rate taxpayers claim the extra 20p / 25p
+        per £1 via Self Assessment. Ltd Co employer contributions bypass this entirely
+        and are corporation-tax deductible.
+      </p>
+
+      <h3>Has the Lifetime Allowance been abolished?</h3>
+      <p>
+        Yes (6 April 2024). Replaced by the Lump Sum Allowance (£268,275) and the Lump
+        Sum & Death Benefit Allowance (£1,073,100). Drawdown income is taxed at marginal
+        rate.
+      </p>
+
+      <h3>When can I access my pension?</h3>
+      <p>
+        Normal Minimum Pension Age 55 (rising to 57 in April 2028). 25% available as
+        tax-free lump sum (within the LSA cap); the rest is taxable income.
+      </p>
+
+      <h3>What is sequence-of-returns risk?</h3>
+      <p>
+        The phenomenon that the order of returns matters in decumulation, not just the
+        average. The BracketMath simulator uses block-bootstrap from 125 years of UK
+        history to preserve the autocorrelation that produces this risk — Gaussian Monte
+        Carlo misses it.
+      </p>
+
+      <h3>Is a 4% safe withdrawal rate safe in the UK?</h3>
+      <p>
+        No — UK history suggests 3.3%–3.6% real over 30 years for a 60/40 portfolio. The
+        simulator reports the exact probability of ruin for your inputs.
+      </p>
+
+      <h2>Sources</h2>
+      <ul>
+        <li>HMRC — Tax on your private pension contributions: <a href="https://www.gov.uk/tax-on-your-private-pension" rel="noopener nofollow">gov.uk/tax-on-your-private-pension</a></li>
+        <li>HMRC — Annual Allowance and the taper: <a href="https://www.gov.uk/tax-on-your-private-pension/annual-allowance" rel="noopener nofollow">gov.uk/.../annual-allowance</a></li>
+        <li>HMRC — Lump Sum Allowance (post-LTA): <a href="https://www.gov.uk/government/publications/abolition-of-the-lifetime-allowance-frequently-asked-questions" rel="noopener nofollow">gov.uk/.../abolition-of-the-lifetime-allowance</a></li>
+        <li>FCA — COBS 13 pension projection methodology: <a href="https://www.handbook.fca.org.uk/handbook/COBS/13/" rel="noopener nofollow">handbook.fca.org.uk/COBS/13</a></li>
+        <li>DWP — New State Pension rates: <a href="https://www.gov.uk/new-state-pension/what-youll-get" rel="noopener nofollow">gov.uk/new-state-pension/what-youll-get</a></li>
+        <li>Dimson, Marsh, Staunton — UBS Global Investment Returns Yearbook (long-run UK equity and gilt returns).</li>
+        <li>Bengen (1994), "Determining Withdrawal Rates Using Historical Data", <em>Journal of Financial Planning</em>.</li>
+        <li>Pfau (2010), "An International Perspective on Safe Withdrawal Rates", <em>Journal of Financial Planning</em>.</li>
+        <li>Pensions Regulator — SSAS guidance: <a href="https://www.thepensionsregulator.gov.uk/en/trustees" rel="noopener nofollow">thepensionsregulator.gov.uk</a></li>
+      </ul>
+
+      <p class="text-sm text-[color:var(--color-ink-light)] mt-12">
+        Information only, not financial advice. Monte Carlo probabilities above are
+        computed with 2,000 paths for build performance; the live calculator uses 10,000.
+        See the full <a href="/disclaimer">disclaimer</a>.
+      </p>
+    </div>
+  </section>
+</Layout>

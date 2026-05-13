@@ -1,11 +1,42 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
 import SalaryDividendSplit from '../../components/calculators/SalaryDividendSplit.tsx';
+
+const url = 'https://bracketmath.co.uk/calculators/salary-dividend-split';
 ---
 <Layout
   title="Salary–Dividend Split Optimiser (2026/27)"
   description="Free interactive calculator for UK Ltd Co directors. Finds the salary, dividend & pension split that minimises your combined tax bill — corporation tax, NI, income tax and dividend tax — using a proper joint optimisation, not a rule of thumb."
+  canonical={url}
 >
+  <JsonLd
+    article={{
+      headline: 'Salary–Dividend Split Optimiser (2026/27)',
+      description: 'A joint optimiser over salary and pension contribution for UK Ltd Co directors that minimises the combined corporation tax, NI, income tax and dividend tax bill at 2026/27 rates.',
+      datePublished: '2026-04-06',
+      url,
+      keywords: ['salary dividend split', 'ltd company director', 'pension optimisation', 'corporation tax marginal relief', 'personal allowance taper'],
+    }}
+    howTo={{
+      name: 'How to use the salary–dividend split optimiser',
+      description: 'Five steps to find the optimal director extraction plan at 2026/27 rates.',
+      totalTime: 'PT2M',
+      steps: [
+        { name: 'Enter company profit', text: 'Enter the company profit before director pay. This is the figure you would have available to distribute before any salary, employer pension contribution, or dividend.' },
+        { name: 'Enter age and other personal income', text: 'Age controls the £60,000 SIPP annual allowance taper assumptions. Other personal income (rental, other employment, etc.) stacks below the salary in the tax calculation.' },
+        { name: 'Choose pension weight', text: 'The pension-weight slider tells the optimiser how much you value £1 inside a pension wrapper versus £1 of cash today. Set to 1.0 to treat them as equal (pure wealth maximisation), or below 1.0 to prefer cash now.' },
+        { name: 'Read the optimal split', text: 'The optimiser searches the salary x pension grid and reports the combination that maximises your net wealth. The breakdown shows corporation tax, employer NI, employee NI, income tax and dividend tax under that plan.' },
+        { name: 'Compare to alternatives', text: 'The "alternative scenarios" table shows three rule-of-thumb baselines (LEL salary, PT salary, ST salary) for comparison so you can quantify how much the joint optimiser improves on convention.' },
+      ],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Calculators', url: 'https://bracketmath.co.uk/calculators' },
+      { name: 'Salary–Dividend Split', url },
+    ]}
+  />
+
   <section class="px-6 pt-12 pb-6">
     <div class="mx-auto max-w-6xl">
       <nav class="text-sm mb-6">

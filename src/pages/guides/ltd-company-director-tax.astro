@@ -1,0 +1,468 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { optimiseSalaryDividend } from '../../lib/optim/salary-dividend';
+
+const money = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
+const pct = (n: number) =>
+  (n * 100).toLocaleString('en-GB', { maximumFractionDigits: 1 }) + '%';
+
+function run(profits: number, opts: { claimEA?: boolean } = {}) {
+  return optimiseSalaryDividend({
+    profits,
+    age: 40,
+    pensionWeight: 1.0,
+    salaryStep: 100,
+    pensionStep: 500,
+    claimEmploymentAllowance: !!opts.claimEA,
+  });
+}
+
+const r50 = run(50_000);
+const r75 = run(75_000);
+const r100 = run(100_000);
+const r140 = run(140_000);
+const r200 = run(200_000);
+
+// Employment Allowance comparison at £75k (the rare multi-employee case)
+const r75ea = run(75_000, { claimEA: true });
+
+const today = new Date().toISOString().slice(0, 10);
+const url = 'https://bracketmath.co.uk/guides/ltd-company-director-tax';
+---
+<Layout
+  title="Ltd Company Director Tax — The 2026/27 Playbook"
+  description="The salary, dividend, pension and Employment Allowance levers for UK Ltd Co directors, computed at six profit levels by the BracketMath joint optimiser. £100k taper, £50k–£250k marginal-relief band, additional-rate cliff — all priced exactly."
+  canonical={url}
+>
+  <JsonLd
+    article={{
+      headline: "The Ltd Co director's playbook (2026/27)",
+      description: 'Joint optimisation of salary, dividend and pension contributions for UK Ltd Co directors, computed live at six profit levels at 2026/27 rates.',
+      datePublished: today,
+      url,
+      keywords: ['ltd company director tax', 'salary dividend split', 'employment allowance', 'corporation tax marginal relief', 'personal allowance taper'],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Guides', url: 'https://bracketmath.co.uk/guides' },
+      { name: 'Ltd Co Director Tax', url },
+    ]}
+    faq={[
+      { question: 'What salary should a Ltd Co director pay themselves in 2026/27?',
+        answer: `Between £6,500 (Lower Earnings Limit — earns a State Pension qualifying year at zero NI cost) and £12,570 (Personal Allowance — zero income tax). The exact answer depends on profit level and whether the company qualifies for the £10,500 Employment Allowance. For a single-director Ltd Co (which does NOT qualify for EA), the optimiser at £75,000 profit puts salary at ${money(r75.optimum.salary)}. With EA claimable (multi-employee setup), the optimiser shifts salary up to ${money(r75ea.optimum.salary)} because the £10,500 EA absorbs the employer NI bill on £12,570 entirely.` },
+      { question: 'Should I take dividends or salary above £12,570?',
+        answer: 'Dividends, until profits hit roughly £150,000. Above the Secondary Threshold a £1 of salary costs ~15p employer NI + ~8p employee NI + 20p income tax = ~43p of tax versus a £1 of dividend at 8.75p in the basic-rate band — but above the additional-rate threshold (£125,140) dividends are taxed at 39.35% and the salary-vs-dividend gap closes. The joint optimiser solves the exact crossover for your profit level.' },
+      { question: 'What is the £100k cliff and how do I avoid it?',
+        answer: 'Adjusted Net Income above £100,000 triggers the Personal Allowance taper: PA loses £1 per £2 over £100k, fully eroded at £125,140. Effective marginal rate inside the band is 60% (40% IT on the £1 + 40% on the £0.50 of PA reclaimed). The clean exit is an employer pension contribution — it reduces both the salary and the dividend that flow to personal income, keeping ANI below £100k.' },
+      { question: 'What is the £50k–£250k corporation-tax marginal-relief band?',
+        answer: 'Between £50,000 and £250,000 of taxable profit, corporation tax has an effective marginal rate of 26.5% (rather than the headline 25%) because the small-profits relief tapers from £50k upward. Pension contributions and director salary are unusually efficient at reducing taxable profit in this band — every £1 of reduction saves 26.5p of corporation tax, not 25p.' },
+      { question: 'Can a single-director Ltd Co claim the £10,500 Employment Allowance?',
+        answer: 'No. HMRC excludes companies whose only employee paid above the Secondary Threshold is a director (Finance Act 2020 amendment). To claim EA, a company needs at least one non-director employee paid above the Secondary Threshold — and that employee must work substantively, not just be the director\'s spouse on a token salary if they don\'t do real work for the business.' },
+      { question: 'Are pension contributions a salary sacrifice or employer contribution?',
+        answer: 'For Ltd Co directors the cleanest mechanism is an employer contribution — the company pays directly into the director\'s SIPP, no salary is sacrificed, no employer or employee NI is due, and the contribution is corporation-tax-deductible. The £60,000 Annual Allowance is the cap, with 3 years of unused allowance available via carry-forward.' },
+      { question: 'When does the Tapered Annual Allowance bite?',
+        answer: 'When "adjusted income" exceeds £260,000 — the AA reduces by £1 for every £2 over, down to a £10,000 floor at £360,000+ adjusted income. For directors approaching or above this band, the tapered AA materially restricts the pension lever; professional advice is genuinely required because the calculation interacts with carry-forward in complex ways.' },
+    ]}
+  />
+
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6">
+        <a href="/" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Home</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <a href="/guides" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Guides</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>Ltd Co Director Tax</span>
+      </nav>
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        Pillar · UK Tax Year 2026/27 · ~22 min read
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        The Ltd Co director's playbook (2026/27)
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] max-w-3xl leading-relaxed">
+        Salary, dividend, pension and Employment Allowance — the four levers a UK Ltd Co
+        director can pull to reduce their tax bill. This pillar walks through each lever at
+        six profit levels (£50k, £75k, £100k, £140k, £200k) with the optimal extraction plan
+        computed at build time by the BracketMath joint optimiser at 2026/27 rates.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+
+      <h2>The four levers</h2>
+
+      <p>
+        A Ltd Co director chooses how to move money from the company to themselves across
+        four legal mechanisms, each with a different tax profile.
+      </p>
+
+      <p>
+        <strong>Salary</strong> is a deductible expense for corporation tax, which means
+        every £1 paid as salary reduces taxable profit by £1 — saving 19p, 26.5p or 25p of
+        corporation tax depending on which band the profit sits in. Against that, the
+        £1 of salary attracts employer NI at 15% above the £5,000 Secondary Threshold,
+        employee NI at 8% (then 2%) above the £12,570 Primary Threshold, and income tax at
+        20%/40%/45% above the Personal Allowance. The first £5,000 of salary is therefore
+        the most tax-efficient pound in the entire optimisation — it is wholly free of every
+        deduction above and is a deductible expense to the company.
+      </p>
+
+      <p>
+        <strong>Dividends</strong> are paid from post-corporation-tax profit, taxed at
+        8.75%/33.75%/39.35% in the three bands, with a £500 dividend allowance and no
+        National Insurance. Crucially, dividends <em>stack</em> on top of all other income
+        for band purposes, which means the dividend tax rate depends on the salary that
+        precedes it: a £30,000 dividend on top of a £50,000 salary is mostly higher-rate;
+        the same £30,000 dividend on top of a £12,570 salary is mostly basic-rate.
+      </p>
+
+      <p>
+        <strong>Employer pension contributions</strong> are deductible for corporation tax,
+        free of employer and employee NI, and outside personal income tax entirely until
+        the pension is drawn. The pension wrapper grows tax-free. The trade-off is access:
+        funds are locked until the Normal Minimum Pension Age (currently 55, rising to 57
+        in April 2028). The £60,000 Annual Allowance plus three years of carry-forward sets
+        the ceiling, and the Tapered Annual Allowance reduces this for directors with
+        adjusted income above £260,000.
+      </p>
+
+      <p>
+        <strong>The Employment Allowance</strong> is a £10,500 annual reduction in employer
+        NI, available to companies with at least one non-director employee paid above the
+        Secondary Threshold. Most single-director contractor Ltd Cos do <em>not</em>
+        qualify — HMRC closed this loophole in April 2020. The genuine multi-employee case
+        is the only situation where EA shifts the optimal answer.
+      </p>
+
+      <h2>The optimiser at six profit levels</h2>
+
+      <p>
+        Six representative profit levels, with the joint optimiser run at each. The pension
+        weight is set to 1.0 (treat a £1 inside the pension wrapper as worth £1 of cash
+        today) — the maximum-wealth view. Single-director Ltd Co assumed (no Employment
+        Allowance).
+      </p>
+
+      <div class="not-prose my-6 overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-[color:var(--color-rule)] text-left">
+              <th class="py-2 pr-3 font-semibold">Profit</th>
+              <th class="py-2 pr-3 font-semibold">Salary</th>
+              <th class="py-2 pr-3 font-semibold">Pension</th>
+              <th class="py-2 pr-3 font-semibold">Dividend</th>
+              <th class="py-2 pr-3 font-semibold">Net wealth</th>
+              <th class="py-2 pr-3 font-semibold">vs rule</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            {[r50, r75, r100, r140, r200].map((r) => (
+              <tr class="border-b border-[color:var(--color-rule)]">
+                <td class="py-2 pr-3">{money(r.resolvedInput.profits)}</td>
+                <td class="py-2 pr-3">{money(r.optimum.salary)}</td>
+                <td class="py-2 pr-3">{money(r.optimum.pension)}</td>
+                <td class="py-2 pr-3">{money(r.optimum.dividend)}</td>
+                <td class="py-2 pr-3">{money(r.optimum.netWealth)}</td>
+                <td class="py-2 pr-3 text-[color:var(--color-success)]">+{money(r.savingsVsRuleOfThumb)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Three patterns are visible. First, the optimal salary stays close to £12,570 (the
+        Personal Allowance) across all profit levels — the income-tax shelter on the first
+        £12,570 of salary is too valuable to leave on the table. Second, the optimal pension
+        contribution scales with profit: at £50,000 profit there is no room for a
+        meaningful pension contribution because all of the residual cash is needed to make
+        the post-CT extraction worthwhile, but at £100,000 profit the pension absorbs
+        <strong>{money(r100.optimum.pension)}</strong> and at £200,000 profit it reaches the
+        £60,000 Annual Allowance ceiling. Third, the rule-of-thumb gap widens with profit:
+        at £50,000 profit it is only <strong>{money(r50.savingsVsRuleOfThumb)}</strong>; at
+        £140,000 it is <strong>{money(r140.savingsVsRuleOfThumb)}</strong>; at £200,000 it
+        is <strong>{money(r200.savingsVsRuleOfThumb)}</strong>. The optimisation moat grows
+        with the numbers it is operating on.
+      </p>
+
+      <h2>Lever 1: salary — the LEL, PT and ST thresholds</h2>
+
+      <p>
+        Four NI thresholds matter for a Ltd Co director's salary decision in 2026/27.
+        The <strong>Lower Earnings Limit (LEL)</strong>, currently £6,500, is the floor for
+        earning a State Pension qualifying year. A salary below £6,500 produces no NI
+        record and no qualifying year — over a working life this can cost a director the
+        full new State Pension (currently £230.25/week, £11,973/year) if too few qualifying
+        years accumulate. The simplest defence is to ensure the salary is at least £6,500.
+      </p>
+
+      <p>
+        The <strong>Secondary Threshold (ST)</strong>, currently £5,000, is the level above
+        which employers must pay 15% NI on salary. The ST was reduced from £9,100 to £5,000
+        in April 2025 alongside the rate hike from 13.8% to 15%, which materially raised
+        the employer-NI cost of any salary above the LEL. The <strong>Primary Threshold
+        (PT)</strong> at £12,570 is the level above which employees pay 8% NI, and it
+        coincides with the Personal Allowance — so the first £12,570 of salary is free of
+        income tax. Above the <strong>Upper Earnings Limit (UEL)</strong> of £50,270,
+        employee NI drops to 2% but income tax steps up to the higher rate of 40%.
+      </p>
+
+      <p>
+        For a typical single-director Ltd Co the optimiser nearly always converges on a
+        salary at or near £12,570. The £5,000 to £12,570 slice attracts employer NI but no
+        income tax or employee NI, and the corporation-tax shelter unlocked by the
+        deductibility of the salary almost always outweighs the £1,135 of employer NI on
+        the £7,570 slice between ST and PT. The optimiser at £75,000 profit returns a
+        salary of <strong>{money(r75.optimum.salary)}</strong>; at £200,000 profit it
+        returns <strong>{money(r200.optimum.salary)}</strong>. The number stays remarkably
+        stable as profit changes.
+      </p>
+
+      <h2>Lever 2: the Employment Allowance</h2>
+
+      <p>
+        The Employment Allowance is worth £10,500 per company per year against employer NI.
+        For a single-director Ltd Co — by far the most common structure for contractors —
+        HMRC explicitly excludes the company from claiming EA. The exclusion was introduced
+        in April 2016 and tightened in April 2020 to require at least one non-director
+        employee paid above the ST.
+      </p>
+
+      <p>
+        For the rare director who genuinely employs a non-director (a part-time admin, a
+        spouse who does real work, an apprentice), EA does shift the optimal answer. At
+        £75,000 profit, the single-director optimiser returns salary
+        <strong>{money(r75.optimum.salary)}</strong> and pension
+        <strong>{money(r75.optimum.pension)}</strong>; with EA claimable the optimiser
+        returns salary <strong>{money(r75ea.optimum.salary)}</strong> and pension
+        <strong>{money(r75ea.optimum.pension)}</strong>, with net-wealth advantage of
+        roughly <strong>{money(r75ea.optimum.netWealth - r75.optimum.netWealth)}/year</strong>
+        — because EA effectively absorbs all the employer NI on a £12,570 salary.
+      </p>
+
+      <p>
+        The implication for a director without a genuine second employee: do <em>not</em>
+        claim EA. HMRC enforcement is active in this area, and incorrect claims trigger
+        repayment with interest and (sometimes) penalties.
+      </p>
+
+      <h2>Lever 3: pension — the master lever above £100k</h2>
+
+      <p>
+        Once profit crosses £100,000, employer pension contributions become the single most
+        powerful lever in the optimisation. There are four overlapping reasons.
+      </p>
+
+      <p>
+        First, the contribution is corporation-tax deductible at the marginal CT rate.
+        For profits in the £50k–£250k marginal-relief band, that rate is 26.5%, not the
+        headline 25%. A £20,000 contribution costs the company £14,700 in foregone post-tax
+        profit because £5,300 of CT is avoided. Second, the contribution is free of
+        employer NI and employee NI. Third, the contribution does not appear in the
+        director's personal income — which means it cannot push Adjusted Net Income above
+        the £100,000 threshold that triggers the 60%-marginal-rate PA taper. Fourth, the
+        pension wrapper grows tax-free; only the eventual drawdown is subject to income
+        tax (with 25% available as tax-free lump sum up to the £268,275 Lump Sum
+        Allowance).
+      </p>
+
+      <p>
+        The £100,000 cliff makes this concrete. A director with £110,000 of total
+        Adjusted Net Income loses £5,000 of Personal Allowance — costing £2,000 of extra
+        income tax — on top of normal higher-rate tax on the £10,000 above £100,000.
+        Redirecting the £10,000 into an employer pension contribution avoids all of that
+        and the £10,000 also dodges 26.5p of corporation tax. The net effect is roughly
+        £3,650 of tax saved per £10,000 of pension at the margin. The lever is large.
+      </p>
+
+      <p>
+        For UK SIPPs marketed to director-level contractors,
+        <!-- IMPACT: PensionBee -->
+        <a href="https://www.pensionbee.com/" rel="sponsored noopener nofollow">PensionBee</a>
+        and
+        <!-- IMPACT: Penfold -->
+        <a href="https://getpenfold.com/" rel="sponsored noopener nofollow">Penfold</a>
+        both accept employer contributions directly from a Ltd Co bank account, which is
+        the cleanest mechanism. Both are FCA-regulated, both publish their Ongoing Charges
+        Figure clearly, and both are Impact.com advertisers (see the
+        <a href="/disclaimer">disclosure policy</a>).
+      </p>
+
+      <h2>Lever 4: dividend stacking</h2>
+
+      <p>
+        Dividend tax stacks above whatever non-dividend income has already been paid. The
+        £500 dividend allowance is applied at the lowest-taxed slice (the band the
+        dividend first enters), and the rest is taxed at 8.75%/33.75%/39.35% depending on
+        the band the slice sits in.
+      </p>
+
+      <p>
+        For the £75,000 profit case, the optimiser computed a dividend of
+        <strong>{money(r75.optimum.dividend)}</strong> on top of a £12,570 salary. The full
+        dividend sits in the basic-rate band (it pushes total income to roughly £62,000,
+        below the £50,270 higher-rate threshold for the slice above PA, plus £500 dividend
+        allowance and so on — the bands interact). The dividend tax bill is
+        <strong>{money(r75.optimum.taxes.dividendTax)}</strong>; the equivalent salary
+        replacement would have cost roughly £4,600 in extra income tax, £2,500 in
+        employee NI, and £4,700 in employer NI on top — a £7,200 swing in favour of
+        dividend extraction.
+      </p>
+
+      <p>
+        For the £140,000 case, the dividend straddles the basic, higher and additional
+        rate bands. The optimiser places the salary at <strong>{money(r140.optimum.salary)}</strong>
+        and routes <strong>{money(r140.optimum.pension)}</strong> into pension explicitly to
+        keep Adjusted Net Income under £100,000 (or to dampen the £100k cliff). The
+        residual dividend of <strong>{money(r140.optimum.dividend)}</strong> is the
+        post-CT distribution. Total dividend tax is
+        <strong>{money(r140.optimum.taxes.dividendTax)}</strong>, with band slicing
+        handled by the engine.
+      </p>
+
+      <h2>Embedded calculator</h2>
+
+      <div class="not-prose my-6 bg-white border border-[color:var(--color-rule)] rounded-lg p-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-2">
+          Calculator · Salary–Dividend Split Optimiser
+        </p>
+        <h3 class="text-xl font-semibold mb-2 text-[color:var(--color-ink)]">
+          Optimise your own salary–dividend split
+        </h3>
+        <p class="text-[color:var(--color-ink-light)] leading-relaxed mb-4">
+          The joint optimiser computes the salary, dividend and employer pension contribution
+          that maximises your net wealth at 2026/27 rates. Pre-populated with the £100,000
+          scenario discussed above; adjust profits, age, other income and pension weighting
+          to match your situation.
+        </p>
+        <a href="/calculators/salary-dividend-split?profits=100000"
+           class="inline-block bg-[color:var(--color-ink)] text-[color:var(--color-paper)] px-5 py-2 rounded-md font-mono text-sm no-underline hover:bg-[color:var(--color-accent)]">
+          Open the £100k scenario →
+        </a>
+      </div>
+
+      <h2>Common edge cases</h2>
+
+      <h3>The £100k cliff in a low-salary, high-dividend setup</h3>
+
+      <p>
+        A director paying themselves £12,570 salary plus £100,000 dividend has Adjusted Net
+        Income of £112,570. The PA taper costs them £1,285 of allowance, which translates
+        to roughly £514 of extra higher-rate tax — small but real. Redirecting £12,570 of
+        the dividend into an employer pension contribution clears the cliff entirely: ANI
+        drops to £100,000, PA is preserved, the contribution attracts no personal tax and
+        is corporation-tax deductible at 26.5% (~£3,330 of CT saved). The change is worth
+        roughly £4,000/year on a £100k dividend.
+      </p>
+
+      <h3>Director who needs the cash now</h3>
+
+      <p>
+        The optimiser's pension-weighted answer maximises lifetime wealth, but a director
+        with a mortgage about to clear or a partner on maternity leave may genuinely need
+        the cash today. The <code>pensionWeight</code> slider in the live calculator
+        models this: set to 0, the optimiser ignores the pension lever entirely and
+        returns the cash-only optimum. The cash-only answer at £140,000 profit yields
+        roughly <strong>{money(r140.cashOptimum.netCash)}</strong> versus the wealth-maximising
+        answer's <strong>{money(r140.optimum.netCash)}</strong> in cash — a {money(Math.abs(r140.cashOptimum.netCash - r140.optimum.netCash))}
+        difference, in exchange for forgoing
+        <strong>{money(r140.optimum.pension)}</strong> of locked-in pension growth.
+      </p>
+
+      <h3>Spouse as second shareholder</h3>
+
+      <p>
+        Settlements legislation (s.624 ITTOIA 2005) prevents a director from gifting income
+        to a spouse without economic substance — but the Arctic Systems case
+        (<em>Jones v Garnett</em>, 2007) confirmed that genuine share ownership in a Ltd
+        Co with full participation rights is allowable. For a director with a non-working
+        spouse and £140,000 profit, a 50/50 share split that produces two basic-rate
+        dividend streams instead of one higher/additional-rate stream can save several
+        thousand pounds a year. This is professional-advice territory — get it right
+        before structuring.
+      </p>
+
+      <h3>Retained profit</h3>
+
+      <p>
+        Profit left in the company is not avoided tax — it is deferred. Corporation tax is
+        paid at the year-end at the standard rates; the cash inside the company is then
+        available for future dividend, salary or pension extraction in a later tax year.
+        For a director with lumpy income (six-figure years interspersed with sub-PA years),
+        retaining profit and smoothing extraction over multiple tax years to keep more of
+        each year's dividend in the basic-rate band can produce material savings. The
+        BracketMath joint optimiser does not model multi-year smoothing in v1; this is on
+        the calculator roadmap.
+      </p>
+
+      <h2>Frequently asked questions</h2>
+
+      <h3>What salary should a Ltd Co director pay themselves in 2026/27?</h3>
+      <p>
+        Between £6,500 (LEL — earns a State Pension qualifying year at zero NI cost) and
+        £12,570 (PA — zero income tax). For a single-director Ltd Co (no Employment
+        Allowance) the optimiser at £75,000 profit returns
+        <strong>{money(r75.optimum.salary)}</strong>; at £200,000 profit it returns
+        <strong>{money(r200.optimum.salary)}</strong>.
+      </p>
+
+      <h3>Should I take dividends or salary above £12,570?</h3>
+      <p>
+        Dividends, until profits hit roughly £150,000. Above the Secondary Threshold a
+        £1 of salary costs ~15p employer NI + ~8p employee NI + 20p income tax = ~43p of
+        tax versus a £1 of dividend at 8.75p in the basic-rate band. The optimiser solves
+        the exact crossover.
+      </p>
+
+      <h3>What is the £100k cliff?</h3>
+      <p>
+        Adjusted Net Income above £100,000 triggers the PA taper: PA loses £1 per £2 over
+        £100k, fully eroded at £125,140. Effective marginal rate inside the band is 60%.
+        Employer pension contributions are the clean exit.
+      </p>
+
+      <h3>Can a single-director Ltd Co claim the £10,500 Employment Allowance?</h3>
+      <p>
+        No. HMRC excludes companies whose only employee paid above the Secondary Threshold
+        is a director. To claim EA you need at least one non-director employee paid above
+        the ST, doing genuine work for the business.
+      </p>
+
+      <h3>Are pension contributions salary sacrifice or employer contribution?</h3>
+      <p>
+        Employer contribution. The company pays directly into the director's SIPP; no
+        salary is sacrificed, no NI applies, the contribution is CT-deductible. £60,000
+        Annual Allowance with up to 3 years of unused allowance available via carry-forward.
+      </p>
+
+      <h3>When does the Tapered Annual Allowance bite?</h3>
+      <p>
+        When "adjusted income" exceeds £260,000. The AA reduces by £1 for every £2 over,
+        down to a £10,000 floor at £360,000+. Professional advice is genuinely required at
+        this level because the calculation interacts with carry-forward.
+      </p>
+
+      <h2>Sources</h2>
+      <ul>
+        <li>HMRC — Income Tax rates: <a href="https://www.gov.uk/income-tax-rates" rel="noopener nofollow">gov.uk/income-tax-rates</a></li>
+        <li>HMRC — NI thresholds and rates: <a href="https://www.gov.uk/government/publications/rates-and-allowances-national-insurance-contributions" rel="noopener nofollow">gov.uk/.../national-insurance-contributions</a></li>
+        <li>HMRC — Corporation Tax marginal relief (CTM03900): <a href="https://www.gov.uk/hmrc-internal-manuals/company-taxation-manual/ctm03900" rel="noopener nofollow">gov.uk/.../ctm03900</a></li>
+        <li>HMRC — Employment Allowance eligibility: <a href="https://www.gov.uk/claim-employment-allowance/eligibility" rel="noopener nofollow">gov.uk/claim-employment-allowance/eligibility</a></li>
+        <li>HMRC — Pension Annual Allowance & taper: <a href="https://www.gov.uk/tax-on-your-private-pension/annual-allowance" rel="noopener nofollow">gov.uk/.../annual-allowance</a></li>
+        <li>HMRC — Tax on dividends: <a href="https://www.gov.uk/tax-on-dividends" rel="noopener nofollow">gov.uk/tax-on-dividends</a></li>
+        <li>Finance Act 2020 (EA director exclusion): <a href="https://www.legislation.gov.uk/ukpga/2020/14" rel="noopener nofollow">legislation.gov.uk/ukpga/2020/14</a></li>
+        <li>ITTOIA 2005 s.624 (settlements legislation, spouse shares): <a href="https://www.legislation.gov.uk/ukpga/2005/5/section/624" rel="noopener nofollow">legislation.gov.uk/ukpga/2005/5/section/624</a></li>
+      </ul>
+
+      <p class="text-sm text-[color:var(--color-ink-light)] mt-12">
+        Information only, not financial or tax advice. All figures are computed live by the
+        BracketMath joint optimiser at 2026/27 rates. See the full
+        <a href="/disclaimer">disclaimer</a>.
+      </p>
+    </div>
+  </section>
+</Layout>

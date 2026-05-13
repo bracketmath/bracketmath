@@ -1,11 +1,43 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
 import SippOptimiser from '../../components/calculators/SippOptimiser.tsx';
+
+const url = 'https://bracketmath.co.uk/calculators/sipp-optimiser';
 ---
 <Layout
   title="SIPP Retirement Optimiser — UK Monte Carlo Pension Calculator (2026/27)"
   description="Free interactive Monte Carlo SIPP retirement calculator for UK savers. 10,000 simulated paths using a block-bootstrap of UK real returns 1900–2024. Shows probability of meeting your target income, probability of pot exhaustion, and the full distribution of outcomes — not a single misleading point estimate."
+  canonical={url}
 >
+  <JsonLd
+    article={{
+      headline: 'SIPP Retirement Optimiser (UK Monte Carlo, 2026/27)',
+      description: 'A block-bootstrap Monte Carlo SIPP retirement simulator running 10,000 paths over 125 years of UK real return history (Dimson-Marsh-Staunton), reporting probability of meeting target income, probability of ruin, and the full percentile fan.',
+      datePublished: '2026-04-06',
+      url,
+      keywords: ['sipp calculator', 'monte carlo pension', 'uk retirement simulator', 'sequence of returns risk', 'safe withdrawal rate'],
+    }}
+    howTo={{
+      name: 'How to use the SIPP retirement optimiser',
+      description: 'Five steps to stress-test a UK retirement plan against 125 years of historical return data.',
+      totalTime: 'PT3M',
+      steps: [
+        { name: 'Enter your starting position', text: 'Current age, current SIPP pot value, and annual contribution. The simulator uses real (CPI-adjusted) cash flows so all figures are in today\'s pounds.' },
+        { name: 'Set retirement age and target income', text: 'Retirement age is when contributions stop and drawdown begins. Target real income is your desired annual withdrawal in today\'s pounds — the simulator inflates this by historical CPI in each scenario.' },
+        { name: 'Choose your asset allocation', text: 'Equity weight (0%–100%) determines the equity/gilt mix. The simulator block-bootstraps from UK equity total returns, UK gilt total returns and UK CPI history. Annual fee reduces both equity and gilt returns by the specified percentage.' },
+        { name: 'Include the State Pension', text: 'The State Pension toggle adds £11,973/year (full new State Pension, 2026/27) from age 66 or 67. This typically reduces the ruin probability substantially for pots under £400,000.' },
+        { name: 'Read the percentile fan and ruin probability', text: 'The fan chart shows the 10th–90th percentile pot trajectory across 10,000 paths. The headline number is the probability of reaching age 95 without running out of money. Below 80% means the plan is fragile — adjust contributions, target income, or retirement age and rerun.' },
+      ],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Calculators', url: 'https://bracketmath.co.uk/calculators' },
+      { name: 'SIPP Optimiser', url },
+    ]}
+  />
+
+
   <section class="px-6 pt-12 pb-6">
     <div class="mx-auto max-w-6xl">
       <nav class="text-sm mb-6" aria-label="Breadcrumb">

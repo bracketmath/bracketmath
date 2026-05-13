@@ -1,0 +1,140 @@
+---
+/**
+ * Shared JSON-LD emitter for BracketMath.
+ *
+ * Drop any combination of `article`, `howTo`, `faq`, and `breadcrumbs` onto the
+ * component and it will emit one `<script type="application/ld+json">` per
+ * passed object — Google parses each independently, so multiple blocks on a
+ * page is the recommended pattern (and matches what schema.org / Google's docs
+ * suggest for pages that legitimately are both an Article AND have an FAQ).
+ *
+ * Validation: run any output through https://validator.schema.org/ or
+ * Google's Rich Results test (https://search.google.com/test/rich-results).
+ *
+ * Editorial rules for BracketMath:
+ *   - The author/publisher is always the *Organization* `BracketMath` —
+ *     never a personal name. (See /about.)
+ *   - `description` is the same one-liner used in <meta name="description">.
+ *   - Citations / external sources are not part of JSON-LD; they live as
+ *     <a rel="noopener nofollow"> in the prose.
+ */
+
+export interface ArticleSchema {
+  /** Headline (≤ 110 chars per Google guidance). */
+  headline: string;
+  /** Short description (1-2 sentences). */
+  description: string;
+  /** ISO date this article was first published. */
+  datePublished: string;
+  /** ISO date last modified — defaults to datePublished. */
+  dateModified?: string;
+  /** Canonical URL. */
+  url: string;
+  /** Optional image URL (absolute). */
+  image?: string;
+  /** Optional list of subject keywords. */
+  keywords?: string[];
+}
+
+export interface HowToStep {
+  name: string;
+  text: string;
+}
+
+export interface HowToSchema {
+  name: string;
+  description: string;
+  totalTime?: string; // ISO 8601 duration e.g. PT5M
+  steps: HowToStep[];
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface BreadcrumbItem {
+  name: string;
+  /** Absolute URL. */
+  url: string;
+}
+
+export interface Props {
+  article?: ArticleSchema;
+  howTo?: HowToSchema;
+  faq?: FaqItem[];
+  breadcrumbs?: BreadcrumbItem[];
+}
+
+const { article, howTo, faq, breadcrumbs } = Astro.props;
+
+const ORG = {
+  '@type': 'Organization',
+  name: 'BracketMath',
+  url: 'https://bracketmath.co.uk',
+  logo: 'https://bracketmath.co.uk/favicon.svg',
+};
+
+const blocks: unknown[] = [];
+
+if (article) {
+  blocks.push({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.headline,
+    description: article.description,
+    datePublished: article.datePublished,
+    dateModified: article.dateModified ?? article.datePublished,
+    author: ORG,
+    publisher: ORG,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': article.url },
+    ...(article.image ? { image: article.image } : {}),
+    ...(article.keywords ? { keywords: article.keywords.join(', ') } : {}),
+    inLanguage: 'en-GB',
+  });
+}
+
+if (howTo) {
+  blocks.push({
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: howTo.name,
+    description: howTo.description,
+    ...(howTo.totalTime ? { totalTime: howTo.totalTime } : {}),
+    step: howTo.steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+    })),
+  });
+}
+
+if (faq && faq.length > 0) {
+  blocks.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((q) => ({
+      '@type': 'Question',
+      name: q.question,
+      acceptedAnswer: { '@type': 'Answer', text: q.answer },
+    })),
+  });
+}
+
+if (breadcrumbs && breadcrumbs.length > 0) {
+  blocks.push({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbs.map((b, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: b.name,
+      item: b.url,
+    })),
+  });
+}
+---
+{blocks.map((b) => (
+  <script type="application/ld+json" set:html={JSON.stringify(b)} />
+))}

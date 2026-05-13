@@ -1,0 +1,452 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { compareIR35 } from '../../lib/ir35/compare';
+
+const money = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
+const pct = (n: number) =>
+  (n * 100).toLocaleString('en-GB', { maximumFractionDigits: 1 }) + '%';
+
+function run(dayRate: number) {
+  return compareIR35({
+    dayRate,
+    billableDays: 220,
+    annualBusinessExpenses: 3_000,
+    umbrellaFeeAnnual: 1_500,
+    pensionPercent: 0.05,
+    age: 40,
+  });
+}
+
+const r400 = run(400);
+const r600 = run(600);
+const r850 = run(850);
+
+const today = new Date().toISOString().slice(0, 10);
+const url = 'https://bracketmath.co.uk/guides/ir35-explained';
+---
+<Layout
+  title="IR35 in 2026: Inside, Outside, and the Maths"
+  description="The off-payroll working rules in plain English (ITEPA 2003 Chapter 10), Status Determination Statement, CEST, and the financial difference at three typical day rates with the break-even uplift computed by bisection."
+  canonical={url}
+>
+  <JsonLd
+    article={{
+      headline: 'IR35 in 2026: inside, outside, and the maths',
+      description: 'A pillar guide to the UK off-payroll working rules, with build-time computed financial comparisons at £400, £600 and £850 day rates and the break-even uplift inside-IR35 would need to match outside.',
+      datePublished: today,
+      url,
+      keywords: ['ir35 uk', 'off-payroll working rules', 'status determination statement', 'cest', 'inside ir35', 'outside ir35'],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Guides', url: 'https://bracketmath.co.uk/guides' },
+      { name: 'IR35 Explained', url },
+    ]}
+    faq={[
+      { question: 'What is IR35 in plain English?',
+        answer: 'IR35 is the colloquial name for the UK Off-Payroll Working Rules in Chapter 10 of ITEPA 2003. The rules ask, for any contractor invoicing through a Ltd Co or other intermediary: if the intermediary were stripped away, would the contractor be an employee of the end client? If yes, the contract is "inside IR35" and is taxed as employment income. If no, it is "outside IR35" and conventional Ltd Co taxation applies.' },
+      { question: 'Who decides whether my contract is inside or outside IR35?',
+        answer: 'Since April 2021, in the private sector, the end client decides for any contract with a medium or large client (turnover > £10.2m, balance sheet > £5.1m, or > 50 employees). The client must issue a Status Determination Statement (SDS) for each contract. For small private-sector clients the responsibility remains with the contractor\'s intermediary. In the public sector the client always decides; this has been the case since April 2017.' },
+      { question: 'What are the three Ready Mixed Concrete tests?',
+        answer: 'The 1968 case Ready Mixed Concrete (South East) Ltd v Minister of Pensions and National Insurance established the three tests UK case law still uses for employment status: (1) mutuality of obligation — is the client obliged to offer work and the contractor obliged to accept it; (2) control — does the client direct how, when and where the work is done; (3) personal service — can the contractor send a substitute. A contract that fails all three is robustly outside IR35; a contract that meets all three is robustly inside.' },
+      { question: 'What is CEST and is it definitive?',
+        answer: 'CEST (Check Employment Status for Tax) is HMRC\'s free online status-determination tool. HMRC has historically stated it will stand by CEST results provided the answers given to the tool match the reality of the engagement. CEST has been criticised for over-emphasising the substitution test and under-weighting mutuality of obligation, and several high-profile tribunal cases have produced status decisions that diverge from CEST output. It is a useful starting point but not a substitute for legal review of high-value contracts.' },
+      { question: 'What is the actual financial difference at a typical day rate?',
+        answer: `Computed at build time on this page: at £400/day × 220 days, inside-IR35 take-home is roughly ${money(r400.inside.netCash)} versus outside-IR35 ${money(r400.outside.netCash)} — a gap of ${money(r400.netCashDifference)}/year. At £600/day the gap is ${money(r600.netCashDifference)}/year; at £850/day it widens to ${money(r850.netCashDifference)}/year because the additional-rate band starts to bite the inside-IR35 PAYE deduction harder.` },
+      { question: 'Can I negotiate a higher rate to compensate for inside-IR35?',
+        answer: `Yes, and the BracketMath calculator reports the exact uplift needed. At £600/day × 220 days outside-IR35 the equivalent break-even inside-IR35 day rate is approximately ${money(r600.insideBreakevenDayRate ?? 0)}/day — i.e. you would need to negotiate an uplift of roughly ${pct(((r600.insideBreakevenDayRate ?? r600.inside.contractValue / 220) - 600) / 600)} on the day rate to match the outside-IR35 net cash position. Many agencies advertise inside-IR35 rates at a 15–20% uplift versus outside; in most cases the true required uplift is higher than that.` },
+      { question: 'Is this guide a status determination?',
+        answer: 'No. This guide explains the legislation, the case-law tests and the financial maths. A status determination is a legal and factual exercise specific to your contract, your working practices, and the client\'s setup. For any contract with material value, get a written opinion from a qualified specialist (e.g. a chartered tax adviser with IR35 expertise, or a specialist law firm). The Status Determination Statement issued by the client is the formal legal document; this page is information only.' },
+    ]}
+  />
+
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6">
+        <a href="/" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Home</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <a href="/guides" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Guides</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>IR35 Explained</span>
+      </nav>
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        Pillar · UK Tax Year 2026/27 · ~22 min read
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        IR35 in 2026: inside, outside, and the maths
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] max-w-3xl leading-relaxed">
+        The Off-Payroll Working Rules in plain English, the three Ready Mixed Concrete
+        tests, CEST and its limits, and a build-time comparison of inside-vs-outside-IR35
+        net cash at three typical day rates with the break-even uplift computed by
+        bisection.
+      </p>
+      <p class="mt-4 text-sm text-[color:var(--color-ink-light)] max-w-3xl">
+        <strong>This is not a status determination.</strong> A status determination is a
+        contract-specific legal exercise. For any contract with material value, obtain
+        a written opinion from a specialist tax adviser.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+
+      <h2>The legislation in a paragraph</h2>
+
+      <p>
+        IR35 is the colloquial name for what is now formally the <strong>Off-Payroll
+        Working Rules</strong> in Chapter 10 of the Income Tax (Earnings and Pensions)
+        Act 2003. The rules ask, for any contractor invoicing through a personal service
+        company (PSC) or other intermediary: <em>if the intermediary were stripped away
+        and the contractor was paid by the end client directly, would the relationship be
+        one of employment?</em> If the answer is yes, the contract is "inside IR35" and
+        must be taxed as if the contractor were a deemed employee of the end client.
+        If the answer is no, the contract is "outside IR35" and conventional Ltd Co
+        taxation applies.
+      </p>
+
+      <p>
+        The original IR35 legislation entered force in April 2000 and made the contractor
+        responsible for assessing their own status. This produced two decades of dispute
+        and patchy compliance. The legislation was reformed twice: in <strong>April
+        2017</strong> for the public sector, and in <strong>April 2021</strong> for the
+        private sector. Under the reforms, status determination shifted from the
+        contractor to the end client (for medium and large clients), and the agency or
+        client (whichever pays the PSC) became liable for unpaid tax if the determination
+        was wrong.
+      </p>
+
+      <h2>The three Ready Mixed Concrete tests</h2>
+
+      <p>
+        UK case law on employment status descends from the 1968 case <em>Ready Mixed
+        Concrete (South East) Ltd v Minister of Pensions and National Insurance</em>.
+        MacKenna J's judgment set out three tests that, while subsequently refined, still
+        form the structural backbone of every status determination today.
+      </p>
+
+      <p>
+        <strong>Mutuality of obligation (MoO).</strong> Is the client obliged to offer
+        work and the contractor obliged to accept it? In an employment relationship the
+        employer is broadly obliged to provide work (or pay if no work is available) and
+        the employee is broadly obliged to do whatever reasonable work is offered. In a
+        consultancy engagement the client typically commissions discrete deliverables
+        and the contractor decides whether to take them on. A clean MoO outside-IR35
+        contract has explicit clauses confirming that neither party has any obligation
+        beyond the work-package described.
+      </p>
+
+      <p>
+        <strong>Control.</strong> Does the client direct how, when and where the work is
+        done? An employee is told what to do, when to be at the desk, and broadly how to
+        do it (subject to expertise). A genuine contractor is engaged for an outcome; the
+        method and the working pattern are the contractor's responsibility. The control
+        test is the most fact-sensitive of the three because it depends on the actual
+        working practices, not just the contract wording — HMRC will look at the day-to-
+        day reality of the engagement when assessing this point.
+      </p>
+
+      <p>
+        <strong>Personal service / substitution.</strong> Can the contractor send a
+        qualified substitute in their place without the client's veto? An employee is
+        personally required to do the work. A genuine contractor can swap in an
+        equivalently-qualified colleague (the case law accepts an unrestricted right of
+        substitution as strong evidence of self-employment, even if the right is never
+        exercised in practice). Contracts that grant a right of substitution but
+        condition it on client approval do not satisfy this test — see <em>Pimlico
+        Plumbers v Smith</em> (2018) and the long line of cases following it.
+      </p>
+
+      <p>
+        A contract that fails all three tests is robustly outside IR35. A contract that
+        meets all three is robustly inside. The hard cases are the ones that meet one
+        or two — most engagements live in this grey area, which is why specialist legal
+        opinion is genuinely valuable for material-value contracts.
+      </p>
+
+      <h2>The Status Determination Statement (SDS)</h2>
+
+      <p>
+        Since April 2021, the end client (if medium or large) must issue a written
+        <strong>Status Determination Statement</strong> for every off-payroll engagement.
+        The SDS must state whether the engagement is inside or outside IR35, and provide
+        the reasons. The SDS must be passed down the contractual chain to the PSC and to
+        any agency that pays the PSC. If the SDS says "inside IR35", the fee-payer (the
+        party that pays the PSC) becomes responsible for deducting PAYE income tax and
+        employee NI from the payment, and for paying employer NI to HMRC on top.
+      </p>
+
+      <p>
+        The SDS regime exists in addition to the contractor's own right to dispute the
+        determination. A contractor who disagrees with the SDS can write a formal
+        challenge to the client, who has 45 days to respond with reasons (the
+        "client-led status disagreement process"). In practice these challenges rarely
+        produce reversals because the client has strong incentive to keep contracts
+        inside IR35 — the financial liability of getting it wrong sits with the client,
+        not the contractor.
+      </p>
+
+      <h2>CEST and its limits</h2>
+
+      <p>
+        HMRC publishes a free online tool, <strong>Check Employment Status for Tax
+        (CEST)</strong>, which produces a status determination from a structured
+        questionnaire. HMRC's published position is that it will stand by CEST output
+        provided the answers given to the tool reflect the reality of the engagement.
+        In principle this gives CEST quasi-safe-harbour status; in practice the tool has
+        well-documented weaknesses.
+      </p>
+
+      <p>
+        The most significant weakness is CEST's weighting of mutuality of obligation:
+        the tool assumes MoO is satisfied in nearly every engagement and does not
+        explicitly test for it. Several First-tier Tribunal cases (most prominently the
+        <em>Atholl House Productions Ltd v HMRC</em> line, involving Kaye Adams) have
+        turned on MoO arguments that CEST does not properly capture. CEST's
+        substitution test is also reported by practitioners as over-weighted relative
+        to control and MoO.
+      </p>
+
+      <p>
+        Operational guidance: use CEST as a sanity check, not a definitive answer.
+        For contracts above ~£60,000 of annual value, get a written specialist opinion
+        from an IR35 review firm (Qdos, Bauer & Cottrell, etc.) and use that in
+        conjunction with CEST. For genuinely borderline contracts, IR35 insurance is
+        available from several providers and is materially cheaper than the contingent
+        liability.
+      </p>
+
+      <h2>The financial impact: three day rates (computed at build time)</h2>
+
+      <p>
+        The BracketMath IR35 comparator runs the inside-IR35 umbrella stack and the
+        outside-IR35 Ltd Co stack side-by-side, with the outside route driven by the
+        joint salary-dividend optimiser to ensure each side is as efficient as it
+        legally can be. The table below assumes 220 billable days, £3,000 of annual
+        business expenses (insurance, accountancy, software, training), £1,500 of
+        umbrella fees, age 40, and 5% pension contribution.
+      </p>
+
+      <div class="not-prose my-6 overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-[color:var(--color-rule)] text-left">
+              <th class="py-2 pr-3 font-semibold">Day rate</th>
+              <th class="py-2 pr-3 font-semibold">Inside net</th>
+              <th class="py-2 pr-3 font-semibold">Outside net</th>
+              <th class="py-2 pr-3 font-semibold">Gap</th>
+              <th class="py-2 pr-3 font-semibold">Break-even inside rate</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            {[
+              { l: '£400/day', r: r400 },
+              { l: '£600/day', r: r600 },
+              { l: '£850/day', r: r850 },
+            ].map(({ l, r }) => (
+              <tr class="border-b border-[color:var(--color-rule)]">
+                <td class="py-2 pr-3">{l}</td>
+                <td class="py-2 pr-3">{money(r.inside.netCash)}</td>
+                <td class="py-2 pr-3">{money(r.outside.netCash)}</td>
+                <td class="py-2 pr-3 text-[color:var(--color-success)]">+{money(r.netCashDifference)}</td>
+                <td class="py-2 pr-3">{r.insideBreakevenDayRate ? money(r.insideBreakevenDayRate) : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Three observations from the figures. First, the inside-vs-outside gap is large
+        in absolute terms — at £600/day × 220 days the outside-IR35 net cash advantage
+        is <strong>{money(r600.netCashDifference)}/year</strong>, which over a five-year
+        contracting career is six figures. Second, the gap <em>widens</em> with day rate
+        because the inside-IR35 PAYE route hits the higher- and additional-rate income
+        tax bands harder than the outside-IR35 dividend route hits the equivalent
+        dividend bands. Third, the break-even uplift inside-IR35 would need to match
+        outside ranges from roughly {pct(((r400.insideBreakevenDayRate ?? 400) - 400) / 400)}
+        at £400/day to roughly {pct(((r850.insideBreakevenDayRate ?? 850) - 850) / 850)}
+        at £850/day — meaningfully more than the 10–15% uplift many agencies pitch as
+        sufficient.
+      </p>
+
+      <h2>The umbrella stack, in detail</h2>
+
+      <p>
+        Inside-IR35 the contract value is paid to an umbrella company, which converts
+        it into a deemed salary through a chain of deductions. The umbrella receives the
+        gross "assignment rate" from the agency or client, deducts its own fee (typically
+        £25–£35/week, £1,300–£1,800/year), pays employer NI at 15% above the £5,000
+        Secondary Threshold from the assignment-rate residual, and optionally passes
+        through 0.5% Apprenticeship Levy. What remains is paid as gross salary, on which
+        PAYE income tax (20%/40%/45%) and employee NI (8% / 2%) are then deducted.
+      </p>
+
+      <p>
+        The economic incidence of employer NI is on the contractor, not the umbrella —
+        the umbrella simply funds it from the gross assignment rate before declaring a
+        salary number. This is why the headline "umbrella take-home percentage" at
+        typical day rates lands at around <strong>{pct(r600.inside.netCash / (600 * 220))}</strong>
+        of gross contract value at £600/day. The most popular lever inside-IR35 is
+        <strong>salary sacrifice into pension</strong>: the umbrella reduces the
+        contractor's PAYE salary by the contribution amount and pays it directly into
+        the contractor's SIPP. Salary sacrifice avoids both employer NI and employee NI
+        on the sacrificed amount, making it the most tax-efficient mechanism available
+        to an inside-IR35 contractor.
+      </p>
+
+      <h2>The Ltd Co stack, in detail</h2>
+
+      <p>
+        Outside-IR35 the day-rate × billable-days lands as turnover in the contractor's
+        Ltd Co. Reasonable business expenses are deducted (insurance, accountancy,
+        software, mileage, training that maintains existing skills), then the residual
+        is the "profit before director pay" that the
+        <a href="/calculators/salary-dividend-split">joint optimiser</a> solves for. The
+        optimiser chooses the salary, employer pension contribution and dividend that
+        maximise the director's net wealth at 2026/27 rates, accounting for the £100k PA
+        cliff, the £50k–£250k CT marginal-relief band, and the £125,140 additional-rate
+        threshold.
+      </p>
+
+      <p>
+        At £600/day × 220 days the gross contract value is £132,000 — a profit level at
+        which the £100k cliff is squarely in scope. The optimiser routes a meaningful
+        employer pension contribution explicitly to keep adjusted net income below the
+        £100,000 threshold and preserve the full Personal Allowance. This is the
+        structural reason outside-IR35 wins so decisively above £500/day: the pension
+        lever is unavailable inside-IR35 except through salary sacrifice, which has its
+        own efficiency but cannot match the corporation-tax-deductible pension
+        contribution.
+      </p>
+
+      <h2>Embedded calculator</h2>
+
+      <div class="not-prose my-6 bg-white border border-[color:var(--color-rule)] rounded-lg p-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-2">
+          Calculator · Take-Home (Inside vs Outside IR35)
+        </p>
+        <h3 class="text-xl font-semibold mb-2 text-[color:var(--color-ink)]">
+          Compare your own day rate, inside vs outside
+        </h3>
+        <p class="text-[color:var(--color-ink-light)] leading-relaxed mb-4">
+          The take-home calculator runs the full inside-IR35 umbrella stack and the
+          outside-IR35 Ltd Co stack side-by-side at 2026/27 rates, with the outside
+          route driven by the joint salary-dividend optimiser. It also reports the
+          break-even inside-IR35 day rate by bisection.
+        </p>
+        <a href="/calculators/take-home?dayRate=600"
+           class="inline-block bg-[color:var(--color-ink)] text-[color:var(--color-paper)] px-5 py-2 rounded-md font-mono text-sm no-underline hover:bg-[color:var(--color-accent)]">
+          Open the £600/day scenario →
+        </a>
+      </div>
+
+      <h2>Public vs private sector</h2>
+
+      <p>
+        The April 2017 public-sector reform applies to engagements with any UK public
+        authority (NHS, HMRC, central government, devolved governments, local authorities,
+        most universities). The April 2021 private-sector reform applies to engagements
+        with any UK private-sector client that meets two of the three "medium / large"
+        criteria — turnover > £10.2m, balance sheet > £5.1m, or > 50 employees. For
+        engagements with small private-sector clients the IR35 determination remains the
+        contractor's responsibility under the original (pre-2017) regime.
+      </p>
+
+      <p>
+        In practice "small private-sector client" is a rapidly diminishing share of the
+        market because the size criteria are interpreted on a group-wide basis: an
+        otherwise-small UK subsidiary of a large overseas group counts as large for IR35
+        purposes. Most contractors should assume they are operating under the post-2021
+        regime unless the client confirms otherwise in writing.
+      </p>
+
+      <h2>Insurance, indemnities and HMRC enquiries</h2>
+
+      <p>
+        For contractors operating outside IR35 with active engagements, two forms of
+        protection are widely available. <strong>IR35 insurance</strong> (Qdos, IPSE
+        Plus, Caunce O'Hara and others) covers the legal and tax cost of an HMRC IR35
+        investigation, including representation and any settled liability up to a
+        policy limit. Annual premiums run £200–£500 for individual cover. <strong>Tax
+        investigation insurance</strong> is broader and covers Self Assessment, VAT and
+        PAYE enquiries in addition to IR35.
+      </p>
+
+      <p>
+        HMRC's IR35 enquiry mechanism is the standard direct-tax enquiry process,
+        opened by a letter from a HMRC compliance officer asking for documentation of
+        the engagement. Material engagements typically warrant tax-investigation cover;
+        for under-£50k engagements the insurance is often economically borderline.
+      </p>
+
+      <h2>Frequently asked questions</h2>
+
+      <h3>What is IR35 in plain English?</h3>
+      <p>
+        The Off-Payroll Working Rules in Chapter 10 of ITEPA 2003. They ask: if the
+        contractor's PSC were stripped away, would the relationship be employment? If
+        yes, the contract is taxed as employment income; if no, conventional Ltd Co
+        taxation applies.
+      </p>
+
+      <h3>Who decides inside or outside?</h3>
+      <p>
+        Since April 2021, the end client (if medium or large). The client issues a
+        Status Determination Statement. Small-client engagements remain the contractor's
+        responsibility.
+      </p>
+
+      <h3>What are the three Ready Mixed Concrete tests?</h3>
+      <p>
+        Mutuality of obligation, control, and personal service (substitution). A
+        contract failing all three is robustly outside; meeting all three is robustly
+        inside.
+      </p>
+
+      <h3>Is CEST definitive?</h3>
+      <p>
+        No. HMRC stands by CEST output if the answers reflect reality, but CEST
+        under-weights MoO and over-weights substitution. Use it as a starting point;
+        get a specialist opinion for material contracts.
+      </p>
+
+      <h3>What's the actual financial difference?</h3>
+      <p>
+        At £600/day × 220 days, computed above: roughly <strong>{money(r600.netCashDifference)}/year</strong>
+        in favour of outside-IR35. At £850/day the gap widens to {money(r850.netCashDifference)}.
+      </p>
+
+      <h3>Can a higher inside-IR35 rate compensate?</h3>
+      <p>
+        Yes — see the break-even column. Most agencies pitch 10–15% uplifts; the actual
+        break-even at £600/day is roughly {pct(((r600.insideBreakevenDayRate ?? 600) - 600) / 600)}.
+      </p>
+
+      <h3>Is this guide a status determination?</h3>
+      <p>
+        No. This is a methodology and maths guide. A status determination is contract-
+        specific and requires professional review.
+      </p>
+
+      <h2>Sources</h2>
+      <ul>
+        <li>HMRC — Off-Payroll Working Rules (IR35): <a href="https://www.gov.uk/guidance/understanding-off-payroll-working-ir35" rel="noopener nofollow">gov.uk/.../understanding-off-payroll-working-ir35</a></li>
+        <li>HMRC Employment Status Manual: <a href="https://www.gov.uk/hmrc-internal-manuals/employment-status-manual" rel="noopener nofollow">gov.uk/hmrc-internal-manuals/employment-status-manual</a></li>
+        <li>HMRC CEST tool: <a href="https://www.gov.uk/guidance/check-employment-status-for-tax" rel="noopener nofollow">gov.uk/.../check-employment-status-for-tax</a></li>
+        <li>Income Tax (Earnings and Pensions) Act 2003, Chapter 10: <a href="https://www.legislation.gov.uk/ukpga/2003/1/part/2/chapter/10" rel="noopener nofollow">legislation.gov.uk ITEPA 2003 c.10</a></li>
+        <li>Ready Mixed Concrete v MPNI [1968] 2 QB 497.</li>
+        <li>Atholl House Productions Ltd v HMRC [2022] EWCA Civ 501.</li>
+        <li>Pimlico Plumbers v Smith [2018] UKSC 29.</li>
+        <li>HMRC — Apprenticeship Levy: <a href="https://www.gov.uk/guidance/pay-apprenticeship-levy" rel="noopener nofollow">gov.uk/.../pay-apprenticeship-levy</a></li>
+      </ul>
+
+      <p class="text-sm text-[color:var(--color-ink-light)] mt-12">
+        Information only, not legal or tax advice. Status determinations require contract-
+        specific professional opinion. See the full <a href="/disclaimer">disclaimer</a>.
+      </p>
+    </div>
+  </section>
+</Layout>

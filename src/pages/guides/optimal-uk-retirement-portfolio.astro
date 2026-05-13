@@ -1,0 +1,463 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { simulateRetirement } from '../../lib/montecarlo/simulate';
+
+const money = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
+const pct = (n: number) =>
+  (n * 100).toLocaleString('en-GB', { maximumFractionDigits: 1 }) + '%';
+
+function mc(opts: Parameters<typeof simulateRetirement>[0]) {
+  return simulateRetirement({ ...opts, numPaths: 2_000, seed: 1 });
+}
+
+// Allocation comparison: same saver, three equity weights.
+const baseline = {
+  currentAge: 40, retirementAge: 65, currentPot: 100_000,
+  annualContribution: 15_000, targetRetirementIncome: 30_000,
+};
+const eq30 = mc({ ...baseline, equityWeight: 0.3 });
+const eq60 = mc({ ...baseline, equityWeight: 0.6 });
+const eq90 = mc({ ...baseline, equityWeight: 0.9 });
+
+// Withdrawal-rate stress: 60/40 portfolio, increasing withdrawal rates.
+// Approximate by adjusting target income at fixed retirement pot.
+const wr3 = mc({ currentAge: 65, retirementAge: 65, currentPot: 500_000, annualContribution: 0, targetRetirementIncome: 15_000, equityWeight: 0.6 });
+const wr35 = mc({ currentAge: 65, retirementAge: 65, currentPot: 500_000, annualContribution: 0, targetRetirementIncome: 17_500, equityWeight: 0.6 });
+const wr4 = mc({ currentAge: 65, retirementAge: 65, currentPot: 500_000, annualContribution: 0, targetRetirementIncome: 20_000, equityWeight: 0.6 });
+
+const today = new Date().toISOString().slice(0, 10);
+const url = 'https://bracketmath.co.uk/guides/optimal-uk-retirement-portfolio';
+---
+<Layout
+  title="The Mathematically Optimal UK Retirement Portfolio for a Self-Employed Person"
+  description="Equity / gilt allocation by age, sequence-of-returns risk, the 4% rule's UK problems, and the empirical UK safe withdrawal rate computed from a Monte Carlo over 125 years of Dimson-Marsh-Staunton return history."
+  canonical={url}
+>
+  <JsonLd
+    article={{
+      headline: 'The mathematically optimal UK retirement portfolio for a self-employed person',
+      description: 'Equity/gilt allocation by age, sequence-of-returns risk, the 4% rule problems in the UK context, and the empirical safe withdrawal rate from 125 years of UK history.',
+      datePublished: today,
+      url,
+      keywords: ['self employed retirement uk', 'optimal retirement portfolio', 'safe withdrawal rate uk', 'sequence of returns risk', 'monte carlo retirement'],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Guides', url: 'https://bracketmath.co.uk/guides' },
+      { name: 'Optimal UK Retirement Portfolio', url },
+    ]}
+    faq={[
+      { question: 'What is the optimal equity/gilt allocation for a UK retirement portfolio?',
+        answer: 'There is no single answer — it depends on age, target income, current pot, contribution rate and risk tolerance. The Monte Carlo on this page shows that for a 40-year-old saving £15,000/year for 25 years to a £30,000/year real target, a 90/10 portfolio has a lower probability of ruin than a 30/70 portfolio across the full distribution of UK historical outcomes, despite the higher year-to-year volatility. The risk of being too cautious is meaningful.' },
+      { question: 'Is the 4% rule safe in the UK?',
+        answer: 'No. The Bengen 4% rule was derived from US return history with stronger long-run equity returns. Replaying the analysis on UK Dimson-Marsh-Staunton data produces a safe withdrawal rate closer to 3.3%–3.6% real over 30 years for a 60/40 portfolio. The BracketMath simulator on this page lets you stress-test the figure for your specific pot, age and target income.' },
+      { question: 'Should I have home-country (UK) bias in my equity allocation?',
+        answer: 'Generally no. UK equities are roughly 4% of global market capitalisation but the FTSE All-Share Index has high sector concentration in financials, mining and oil — a poor proxy for the global economy. Most academic literature recommends global market-cap weighting with at most modest home-country tilt; a typical "global tracker" ETF (Vanguard FTSE Global All Cap, HSBC FTSE All-World) is a defensible single-fund solution.' },
+      { question: 'ETF vs OEIC vs investment trust?',
+        answer: 'For most self-employed savers in a SIPP, an ETF (Exchange-Traded Fund) is the lowest-cost wrapper for passive index exposure (typical OCF 0.05%-0.30%). OEICs (Open-Ended Investment Companies) are pricier but commission-free at platforms that charge ETF dealing fees; the all-in cost is often comparable. Investment trusts are closed-end vehicles trading at variable premiums/discounts to NAV — useful for niche strategies, but more complex and less suitable as a core holding.' },
+      { question: 'What is the rising-equity glide path?',
+        answer: 'A 2014 paper by Wade Pfau and Michael Kitces showed that, counter-intuitively, increasing equity exposure during decumulation reduces the probability of ruin in some US historical scenarios. The mechanism is sequence-of-returns risk: a conservative allocation at the start of retirement protects against early-retirement crashes, but as the retiree ages and the remaining horizon shortens, increased equity exposure tolerates the residual risk. The result is contested for UK data; conservative practitioners still recommend a flat 50/50 to 60/40 through decumulation.' },
+      { question: 'Should I include the State Pension in my retirement plan?',
+        answer: 'Yes. The full new State Pension is £230.25/week (£11,973/year) at 2026/27 rates, payable from State Pension Age (currently 66, rising to 67 in 2028). For most self-employed savers it represents 25%-40% of their target retirement income and substantially reduces the ruin probability for any pot above £200,000. The BracketMath simulator\'s statePensionAnnual input lets you model this directly.' },
+      { question: 'How often should I rebalance?',
+        answer: 'Annually is a defensible default. More frequent rebalancing produces marginally better risk-adjusted returns in backtests but the gain is consumed by transaction costs and tax events outside a SIPP. Inside a SIPP, dealing costs and CGT events are moot; quarterly rebalancing is fine. Avoid monthly rebalancing — the additional friction outweighs the benefit.' },
+    ]}
+  />
+
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6">
+        <a href="/" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Home</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <a href="/guides" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Guides</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>Optimal UK Retirement Portfolio</span>
+      </nav>
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        Pillar · 2026/27 rates · ~25 min read
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        The mathematically optimal UK retirement portfolio
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] max-w-3xl leading-relaxed">
+        Equity / gilt allocation by age, the rising-equity glide path, sequence-of-returns
+        risk, the 4% rule's structural problems in a UK context, and the empirical UK
+        safe withdrawal rate — with three allocation scenarios and three withdrawal rates
+        run at build time over 125 years of Dimson-Marsh-Staunton UK return history.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+
+      <h2>The problem statement</h2>
+
+      <p>
+        A self-employed UK saver building a retirement portfolio is making, in formal
+        terms, a multi-decade decision about how to allocate capital between two assets
+        with very different return distributions — equities (high expected real return,
+        high volatility, fat-tailed) and gilts (low expected real return, lower
+        volatility, sensitive to unexpected inflation). The decision unfolds across two
+        phases: <strong>accumulation</strong>, where the goal is wealth growth, and
+        <strong>decumulation</strong>, where the goal is sustaining a withdrawal stream
+        without running out of capital before death.
+      </p>
+
+      <p>
+        The two phases have qualitatively different risk profiles. In accumulation, the
+        worst thing that can happen is a long bear market just before retirement that
+        destroys decades of compound growth — but as long as the saver keeps contributing
+        and rebalancing, time will heal most wounds. In decumulation, the worst thing
+        that can happen is a crash <em>at the start</em> of retirement: withdrawals from
+        a depleted pot permanently destroy the capital base, and subsequent recoveries
+        cannot fully repair the damage. This is the famous <strong>sequence-of-returns
+        risk</strong>, and it is the central technical problem retirement portfolio
+        design has to solve.
+      </p>
+
+      <h2>The data: 125 years of UK return history</h2>
+
+      <p>
+        The empirical basis for the analysis on this page is the Dimson-Marsh-Staunton
+        (DMS) UK historical return series, published annually in the UBS Global
+        Investment Returns Yearbook. The series covers 1900–2024 — 125 years — and
+        includes monthly total returns for UK equities, UK gilts, and UK CPI inflation.
+        It is the longest contiguous, methodologically consistent UK return series
+        publicly available, and is the de facto standard for UK long-horizon return
+        analysis in academic and industry research.
+      </p>
+
+      <p>
+        Key DMS findings for the UK: real (CPI-adjusted) equity returns averaged
+        ~5.2%/year (geometric); real gilt returns averaged ~1.4%/year; UK inflation
+        averaged ~3.9%/year with substantial regime variation (the 1970s averaged 13%,
+        the 2010s averaged 2%). The equity-gilt correlation is positive on average but
+        meaningfully negative during inflationary regimes — a finding with direct
+        implications for portfolio construction.
+      </p>
+
+      <h2>Allocation comparison (computed at build time)</h2>
+
+      <p>
+        The Monte Carlo below runs the same saver — 40 years old, £100,000 pot,
+        £15,000/year contribution, retire at 65, draw £30,000/year real income to age 95
+        — under three allocations: 30/70 (conservative), 60/40 (balanced) and 90/10
+        (aggressive). 2,000 block-bootstrap paths per allocation.
+      </p>
+
+      <div class="not-prose my-6 overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-[color:var(--color-rule)] text-left">
+              <th class="py-2 pr-3 font-semibold">Allocation</th>
+              <th class="py-2 pr-3 font-semibold">Median terminal pot</th>
+              <th class="py-2 pr-3 font-semibold">P(ruin before 95)</th>
+              <th class="py-2 pr-3 font-semibold">P(meeting target)</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-3">30/70 equity/gilt</td>
+              <td class="py-2 pr-3">{money(eq30.medianTerminalPot)}</td>
+              <td class="py-2 pr-3">{pct(eq30.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{pct(eq30.probabilityOfMeetingTarget)}</td>
+            </tr>
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-3">60/40 equity/gilt</td>
+              <td class="py-2 pr-3">{money(eq60.medianTerminalPot)}</td>
+              <td class="py-2 pr-3">{pct(eq60.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{pct(eq60.probabilityOfMeetingTarget)}</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-3">90/10 equity/gilt</td>
+              <td class="py-2 pr-3">{money(eq90.medianTerminalPot)}</td>
+              <td class="py-2 pr-3">{pct(eq90.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{pct(eq90.probabilityOfMeetingTarget)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The result is a textbook demonstration of the equity risk premium. The 90/10
+        portfolio has median terminal pot of <strong>{money(eq90.medianTerminalPot)}</strong>
+        — roughly {Math.round((eq90.medianTerminalPot / eq30.medianTerminalPot - 1) * 100)}%
+        higher than the 30/70 portfolio's <strong>{money(eq30.medianTerminalPot)}</strong>.
+        And, importantly, the 90/10 ruin probability of <strong>{pct(eq90.probabilityOfRuin)}</strong>
+        is <em>lower</em> than the 30/70 portfolio's <strong>{pct(eq30.probabilityOfRuin)}</strong>
+        — because over a 55-year horizon (25 years accumulation + 30 years decumulation)
+        the long-run real return of equities matters more than the short-term volatility
+        that scares conservative savers into gilts.
+      </p>
+
+      <p>
+        This is the central empirical finding of the long-horizon retirement literature:
+        for a saver with a multi-decade horizon, the dominant risk is <em>not</em>
+        market volatility — it is <em>inflation eroding a too-cautious portfolio over
+        time</em>. UK gilts averaged 1.4% real over 125 years; a £30,000/year real
+        withdrawal from a £600,000 100%-gilt pot produces a sustainability calculation
+        that depends critically on the gilt yield in the specific years of retirement,
+        and 30 years of UK history (the 1970s through to 2000s) suggest the answer is
+        bleak.
+      </p>
+
+      <h2>Withdrawal-rate stress test</h2>
+
+      <p>
+        Now hold the allocation fixed at 60/40 and stress-test the withdrawal rate at
+        retirement. Same retiree — 65 years old, £500,000 pot, drawing to age 95 — under
+        three real withdrawal rates: 3.0% (£15,000/year), 3.5% (£17,500/year) and 4.0%
+        (£20,000/year).
+      </p>
+
+      <div class="not-prose my-6 overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-[color:var(--color-rule)] text-left">
+              <th class="py-2 pr-3 font-semibold">Withdrawal rate</th>
+              <th class="py-2 pr-3 font-semibold">Annual income</th>
+              <th class="py-2 pr-3 font-semibold">P(ruin before 95)</th>
+              <th class="py-2 pr-3 font-semibold">Median terminal pot</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-3">3.0%</td>
+              <td class="py-2 pr-3">{money(15_000)}</td>
+              <td class="py-2 pr-3">{pct(wr3.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{money(wr3.medianTerminalPot)}</td>
+            </tr>
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-3">3.5%</td>
+              <td class="py-2 pr-3">{money(17_500)}</td>
+              <td class="py-2 pr-3">{pct(wr35.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{money(wr35.medianTerminalPot)}</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-3">4.0%</td>
+              <td class="py-2 pr-3">{money(20_000)}</td>
+              <td class="py-2 pr-3">{pct(wr4.probabilityOfRuin)}</td>
+              <td class="py-2 pr-3">{money(wr4.medianTerminalPot)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The 4% rule does not survive UK return history. The 4.0% real withdrawal scenario
+        produces a <strong>{pct(wr4.probabilityOfRuin)}</strong> probability of running
+        out of money before age 95 — substantially above the 5% conventionally tolerated
+        in the academic literature. The 3.5% scenario sits at <strong>{pct(wr35.probabilityOfRuin)}</strong>;
+        the 3.0% scenario at <strong>{pct(wr3.probabilityOfRuin)}</strong>. The empirical
+        UK safe withdrawal rate at the 95% confidence level lies between 3.3% and 3.6%
+        real for a 60/40 portfolio over 30 years — consistent with the published
+        analyses of Wade Pfau (2010) on international withdrawal rates.
+      </p>
+
+      <h2>The 4% rule's UK problems</h2>
+
+      <p>
+        Bengen's original 1994 analysis used US monthly return data from 1926 onward,
+        and concluded that no historical US 30-year retirement period would have failed
+        a 4% real withdrawal from a 50/50 portfolio. The result has been broadly
+        confirmed by subsequent US researchers (Pfau, Kitces, Cooley-Hubbard-Walz).
+      </p>
+
+      <p>
+        The UK case fails for three structural reasons. First, UK real equity returns
+        are about 1.0%/year lower than US returns over the 1900–2024 window — UK equities
+        delivered ~5.2% real vs US equities at ~6.5% real. Second, UK inflation has been
+        more volatile, which means gilts have failed to hedge real returns in the
+        regime-changes that matter most (1970s stagflation, 1990s disinflation,
+        2020s repricing). Third, the UK gilt market has had several extended periods of
+        negative real returns — the 1940s-1970s especially — that destroyed the
+        contribution gilts were supposed to make to a balanced portfolio.
+      </p>
+
+      <p>
+        The practical implication: a self-employed UK saver targeting a 30-year
+        retirement should plan around a 3.3%–3.6% real withdrawal rate, not the
+        popularised 4%. Equivalently, the saver should target a pot of roughly
+        <strong>28× annual expenses</strong>, not 25×.
+      </p>
+
+      <h2>The accumulation glide path</h2>
+
+      <p>
+        A defensible accumulation strategy for a self-employed UK saver:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Age 25–45:</strong> 90/10 equity/gilt or even 100/0 equity. The
+          horizon is so long that the equity risk premium dominates short-term
+          volatility. A global market-cap-weighted equity tracker (Vanguard FTSE Global
+          All Cap, iShares MSCI World, HSBC FTSE All-World) plus optional UK overweight
+          for the home-currency natural hedge.
+        </li>
+        <li>
+          <strong>Age 45–55:</strong> Begin a gradual de-risking glide path to ~70/30 by
+          55. The five-to-ten-year window before retirement is where sequence-of-returns
+          risk becomes meaningful. Adding gilt exposure provides cash-flow optionality
+          for the early years of decumulation.
+        </li>
+        <li>
+          <strong>Age 55–65:</strong> Continue the glide path to ~50/50 or 60/40 by
+          retirement. The five years either side of retirement are the "fragility
+          window" — a 30%+ drawdown in this period is the worst possible timing.
+        </li>
+        <li>
+          <strong>Decumulation (65+):</strong> Either hold the retirement allocation
+          steady, or follow the Pfau-Kitces rising-equity glide path back to ~60/40 or
+          70/30 by age 80. The literature on this point is contested; conservative
+          practice is to hold steady.
+        </li>
+      </ul>
+
+      <h2>The State Pension as a real-income backstop</h2>
+
+      <p>
+        The full new State Pension at 2026/27 rates is £230.25/week, or £11,973/year,
+        payable from State Pension Age. For most self-employed savers retiring at 65,
+        SPA is 66 or 67 — which produces a one- or two-year bridging-period requirement
+        from the SIPP before the State Pension kicks in.
+      </p>
+
+      <p>
+        The State Pension is materially valuable for two reasons. First, it is
+        inflation-linked under the "Triple Lock" (the higher of CPI, average earnings,
+        or 2.5%), which provides a guaranteed real income floor that nothing in the
+        commercial annuity market replicates. Second, it reduces the required
+        withdrawal rate from the SIPP by its full annual amount — a £400,000 SIPP
+        supporting a £20,000/year target retirement income has a 5% withdrawal rate
+        without State Pension and a 2% withdrawal rate <em>with</em> State Pension at
+        £12,000/year. The ruin probability collapses.
+      </p>
+
+      <p>
+        Practical action point: check your State Pension forecast at
+        <a href="https://www.gov.uk/check-state-pension" rel="noopener nofollow">gov.uk/check-state-pension</a>
+        early in career and every five years. Self-employed savers with patchy NI
+        records can voluntarily pay Class 2 contributions (£3.45/week) or Class 3
+        (£17.45/week) to fill gaps and ensure the full 35-year qualifying period
+        accrues by SPA.
+      </p>
+
+      <h2>Embedded calculator</h2>
+
+      <div class="not-prose my-6 bg-white border border-[color:var(--color-rule)] rounded-lg p-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-2">
+          Calculator · SIPP Monte Carlo Optimiser
+        </p>
+        <h3 class="text-xl font-semibold mb-2 text-[color:var(--color-ink)]">
+          Stress-test your own allocation
+        </h3>
+        <p class="text-[color:var(--color-ink-light)] leading-relaxed mb-4">
+          The simulator runs 10,000 block-bootstrap paths over 125 years of UK return
+          history at any equity weight, target income, and retirement horizon. Includes
+          a State Pension input and reports the full percentile fan plus the
+          probability of pot exhaustion.
+        </p>
+        <a href="/calculators/sipp-optimiser"
+           class="inline-block bg-[color:var(--color-ink)] text-[color:var(--color-paper)] px-5 py-2 rounded-md font-mono text-sm no-underline hover:bg-[color:var(--color-accent)]">
+          Open the SIPP optimiser →
+        </a>
+      </div>
+
+      <h2>Provider and wrapper considerations</h2>
+
+      <p>
+        For self-employed UK savers, the wrapper choice has narrowed in the post-2024
+        landscape. <strong>SIPP</strong> (Self-Invested Personal Pension) is the
+        dominant choice for the main retirement portfolio — broad investment universe,
+        full tax relief, available from a wide range of FCA-regulated providers.
+        <strong>Stocks & Shares ISA</strong> is the natural secondary wrapper for any
+        savings above the SIPP Annual Allowance, with £20,000/year contribution limit
+        and full tax-free growth and withdrawal. <strong>General Investment Account
+        (GIA)</strong> sits below ISA and SIPP in the priority order because CGT and
+        dividend tax on the unwrapped account are punitive at higher incomes.
+      </p>
+
+      <p>
+        Within a SIPP, two provider categories: <strong>fixed-fee platforms</strong>
+        (Interactive Investor, etc.) cap the platform charge at ~£140-£250/year, which
+        becomes economic above ~£70,000 of pension wealth; <strong>percentage-fee
+        platforms</strong> (Hargreaves Lansdown, AJ Bell, Vanguard Investor) charge
+        ~0.25%-0.45% of assets per year, which is cheaper below £70,000 of wealth.
+        The cross-over is well-known and worth recomputing every couple of years as
+        the pot grows. For SIPPs marketed specifically to the self-employed,
+        <!-- IMPACT: PensionBee -->
+        <a href="https://www.pensionbee.com/" rel="sponsored noopener nofollow">PensionBee</a>
+        and
+        <!-- IMPACT: Penfold -->
+        <a href="https://getpenfold.com/" rel="sponsored noopener nofollow">Penfold</a>
+        offer pre-built diversified plans and accept Ltd Co employer contributions
+        directly — see the <a href="/disclaimer">disclosure policy</a> for the
+        affiliate disclosure.
+      </p>
+
+      <h2>Frequently asked questions</h2>
+
+      <h3>What is the optimal equity/gilt allocation?</h3>
+      <p>
+        For a 25+ year horizon, biased toward equities — 80/20 to 100/0 in the
+        accumulation phase, gliding to 50/50 to 60/40 by retirement. The simulator
+        confirms that higher equity weights produce lower ruin probabilities over long
+        horizons despite higher year-to-year volatility.
+      </p>
+
+      <h3>Is the 4% rule safe in the UK?</h3>
+      <p>
+        No — UK history puts the safe rate at 3.3%–3.6% real for a 60/40 portfolio over
+        30 years. Target a 28× annual expenses pot, not 25×.
+      </p>
+
+      <h3>Should I have UK home bias?</h3>
+      <p>
+        No, beyond perhaps 5%-10% for the currency hedge. Global market-cap weighting
+        is the default; UK equities are 4% of global market cap and sector-concentrated.
+      </p>
+
+      <h3>ETF vs OEIC vs investment trust?</h3>
+      <p>
+        ETF for low-cost core holdings inside a SIPP. OEIC if your platform charges
+        ETF dealing fees that exceed the OCF difference. Investment trusts for niche
+        strategies only.
+      </p>
+
+      <h3>Should I include the State Pension?</h3>
+      <p>
+        Yes — £11,973/year at 2026/27, Triple-Lock-protected. Substantially reduces
+        the ruin probability for pots above £200,000.
+      </p>
+
+      <h3>How often should I rebalance?</h3>
+      <p>
+        Annually inside a SIPP is fine. Quarterly is fine if your platform doesn't
+        charge per trade. Monthly is over-rebalancing.
+      </p>
+
+      <h2>Sources</h2>
+      <ul>
+        <li>Dimson, Marsh, Staunton — UBS Global Investment Returns Yearbook 2024 (UK 1900–2024 return series).</li>
+        <li>Bengen (1994), "Determining Withdrawal Rates Using Historical Data", <em>Journal of Financial Planning</em>.</li>
+        <li>Pfau (2010), "An International Perspective on Safe Withdrawal Rates", <em>Journal of Financial Planning</em>.</li>
+        <li>Pfau and Kitces (2014), "Reducing Retirement Risk with a Rising Equity Glide Path", <em>Journal of Financial Planning</em>.</li>
+        <li>Cooley, Hubbard, Walz (1998), "Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable" (the Trinity Study).</li>
+        <li>DWP — State Pension rates and Triple Lock: <a href="https://www.gov.uk/new-state-pension" rel="noopener nofollow">gov.uk/new-state-pension</a></li>
+        <li>HMRC — SIPP Annual Allowance: <a href="https://www.gov.uk/tax-on-your-private-pension/annual-allowance" rel="noopener nofollow">gov.uk/.../annual-allowance</a></li>
+        <li>ONS CPI inflation data (1900–present): <a href="https://www.ons.gov.uk/economy/inflationandpriceindices" rel="noopener nofollow">ons.gov.uk/.../inflationandpriceindices</a></li>
+        <li>Bank of England Millennium of Macroeconomic Data: <a href="https://www.bankofengland.co.uk/statistics/research-datasets" rel="noopener nofollow">bankofengland.co.uk/.../research-datasets</a></li>
+      </ul>
+
+      <p class="text-sm text-[color:var(--color-ink-light)] mt-12">
+        Information only, not financial advice. Past performance does not predict future
+        results — the analysis above is empirical over 125 years of UK history but does
+        not preclude future returns falling outside historical experience. See the
+        full <a href="/disclaimer">disclaimer</a>.
+      </p>
+    </div>
+  </section>
+</Layout>

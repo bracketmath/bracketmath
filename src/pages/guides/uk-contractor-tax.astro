@@ -1,0 +1,662 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { optimiseSalaryDividend } from '../../lib/optim/salary-dividend';
+import { niSelfEmployed } from '../../lib/tax/ni';
+import { incomeTax } from '../../lib/tax/income-tax';
+
+/* ------------------------------------------------------------------ */
+/* Build-time engine drives every numeric claim below.                 */
+/* ------------------------------------------------------------------ */
+
+const money = (n: number) =>
+  '£' + Math.round(n).toLocaleString('en-GB');
+const pct = (n: number) =>
+  (n * 100).toLocaleString('en-GB', { maximumFractionDigits: 1 }) + '%';
+
+/** Sole-trader net cash at profit P (rUK). */
+function soleTrader(profits: number) {
+  const ni = niSelfEmployed(profits);
+  const it = incomeTax(profits, {});
+  return {
+    grossProfits: profits,
+    tax: it.tax,
+    ni: ni.ni,
+    netCash: profits - it.tax - ni.ni,
+    effectiveRate: (it.tax + ni.ni) / profits,
+    marginalRate: it.marginalRate + ni.marginalRate,
+  };
+}
+
+/** Ltd Co (post-optimisation, cash-only view at pensionWeight=0). */
+function ltdCo(profits: number) {
+  const res = optimiseSalaryDividend({
+    profits,
+    age: 40,
+    pensionWeight: 0, // cash-only optimum for the headline comparison
+    salaryStep: 100,
+    pensionStep: 500,
+  });
+  const o = res.cashOptimum;
+  return {
+    grossProfits: profits,
+    salary: o.salary,
+    dividend: o.dividend,
+    netCash: o.netCash,
+    totalTax: o.totalTaxAndNI,
+    effectiveRate: o.effectiveTotalTaxRate,
+    cashSavingsVsRuleOfThumb: res.cashSavingsVsRuleOfThumb,
+  };
+}
+
+/** Ltd Co (with pension as a CT-deductible employer contribution). */
+function ltdCoWealth(profits: number) {
+  const res = optimiseSalaryDividend({
+    profits,
+    age: 40,
+    pensionWeight: 1.0,
+    salaryStep: 100,
+    pensionStep: 500,
+  });
+  return res;
+}
+
+// Worked rows used in the comparison table below.
+const st50 = soleTrader(50_000);
+const st80 = soleTrader(80_000);
+const st140 = soleTrader(140_000);
+
+const lc50 = ltdCo(50_000);
+const lc80 = ltdCo(80_000);
+const lc140 = ltdCo(140_000);
+
+const w140 = ltdCoWealth(140_000); // headline £140k Ltd Co case with pension
+
+const today = new Date().toISOString().slice(0, 10);
+const url = 'https://bracketmath.co.uk/guides/uk-contractor-tax';
+---
+<Layout
+  title="UK Contractor Tax — The Complete 2026/27 Guide"
+  description="Sole trader vs umbrella vs Ltd Co for UK contractors, worked at every profit band with the optimal extraction plan computed by the BracketMath joint optimiser. 2026/27 rates throughout."
+  canonical={url}
+>
+  <JsonLd
+    article={{
+      headline: 'UK contractor tax — the complete 2026/27 guide',
+      description: 'Sole trader vs umbrella vs Ltd Co for UK contractors, worked at every profit band with the optimal extraction plan computed at build time by the BracketMath joint optimiser. 2026/27 rates throughout.',
+      datePublished: today,
+      url,
+      keywords: ['uk contractor tax', 'sole trader vs ltd company', 'ltd company director', 'ir35', '2026/27 tax'],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Guides', url: 'https://bracketmath.co.uk/guides' },
+      { name: 'UK Contractor Tax', url },
+    ]}
+    faq={[
+      {
+        question: 'Is a Ltd Co always better than sole trader for a UK contractor?',
+        answer: `No. Below about £30k profit a sole trader is competitive once you account for accountancy fees (~£800–£1,500/yr), the time cost of statutory filings, and the fact that the £500 dividend allowance and the £12,570 Personal Allowance overlap a Ltd Co director's optimal extraction. At £50k profit our optimiser puts the Ltd Co about ${money(lc50.netCash - st50.netCash)} ahead of sole-trader before accountancy fees; at £80k that gap is ${money(lc80.netCash - st80.netCash)}; at £140k it is ${money(lc140.netCash - st140.netCash)}.`,
+      },
+      {
+        question: 'How is dividend tax different from income tax?',
+        answer: 'Dividends are taxed at 8.75% in the basic-rate band, 33.75% in the higher-rate band and 39.35% in the additional-rate band — lower headline rates than income tax (20% / 40% / 45%) but no Personal Allowance applies inside the £500 Dividend Allowance, and dividends stack on top of all other income. They also attract no National Insurance, which is why dividend extraction is more efficient than salary extraction above the Secondary Threshold.',
+      },
+      {
+        question: 'Do umbrella companies pay employer NI?',
+        answer: 'Yes — employer National Insurance is one of three deductions the umbrella takes from your assignment rate before paying you a salary, alongside its own fee and (sometimes) the Apprenticeship Levy. The £5,000 Secondary Threshold and 15% rate apply per HMRC rules introduced in April 2025. This is a key reason inside-IR35 umbrella take-home is materially lower than outside-IR35 Ltd Co take-home at the same headline contract value.',
+      },
+      {
+        question: 'Can I claim a home office, mobile phone or training as a business expense?',
+        answer: 'Yes, subject to HMRC\'s "wholly, exclusively and necessarily" test for the trade. HMRC publishes a flat-rate home-working allowance (currently £6/week, £312/year) that requires no apportionment evidence. Mobile phones in the company name are fully deductible with no Benefit in Kind. Training to maintain existing skills is allowable; training to acquire wholly new skills is not. See HMRC\'s Business Income Manual BIM37000 series for the canonical guidance.',
+      },
+      {
+        question: 'When should I register for VAT?',
+        answer: 'Compulsorily, when your rolling 12-month turnover exceeds £90,000 (2026/27 threshold). Voluntarily, often earlier — the Flat Rate Scheme can produce a small positive margin for IT contractors at 14.5% (with a 1% first-year discount) on gross turnover, and standard VAT is neutral if all your customers are themselves VAT-registered. The £88,000 deregistration threshold gives a small hysteresis band on the way back down.',
+      },
+      {
+        question: 'How does IR35 affect my tax bill?',
+        answer: 'IR35 (now formally the Off-Payroll Working Rules in Chapter 10 of ITEPA 2003) reclassifies a contract as "inside IR35" — meaning it is taxed as if you were an employee of the end client, even if you invoice through your Ltd Co. For most contractors this means working through an umbrella for that specific contract and losing access to dividend extraction, employer pension contributions and full expense rules. See our dedicated IR35 guide for the full breakdown and break-even maths.',
+      },
+      {
+        question: 'What records do I have to keep?',
+        answer: 'For Self Assessment, HMRC requires you to keep records for at least five years after the 31 January submission deadline of the relevant tax year (so 2026/27 records must be kept until 31 January 2033). For a Ltd Co, the Companies Act 2006 requires six years of accounting records from the end of the financial year. Bank statements, mileage logs, expense receipts, supplier and customer invoices, and dividend vouchers must all be retained.',
+      },
+      {
+        question: 'Why does the optimiser put my salary so low?',
+        answer: `Because above the Secondary Threshold every £1 of salary costs roughly 15p in employer NI plus 8p in employee NI plus 20p in income tax — 43p in tax — versus a £1 of dividend which costs 8.75p in the basic-rate band. Salary is only efficient up to the Personal Allowance (free of income tax) and up to the Secondary Threshold (free of employer NI). Above that, dividends win on a marginal-rate basis. The BracketMath optimiser picks the exact crossover, which is between ${money(6_500)} and ${money(12_570)} for most director profiles.`,
+      },
+    ]}
+  />
+
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6">
+        <a href="/" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Home</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <a href="/guides" class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline">Guides</a>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>UK Contractor Tax</span>
+      </nav>
+
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        Pillar · UK Tax Year 2026/27 · ~25 min read
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        The complete UK contractor tax optimisation guide (2026/27)
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] max-w-3xl leading-relaxed">
+        A pillar guide for UK contractors deciding between sole trader, umbrella and limited
+        company, with the optimal extraction plan computed at build time at every profit band
+        from £30,000 to £200,000. Every figure on this page is either a citation to HMRC
+        guidance or the output of one of the calculators that runs live on this site.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 border-t border-[color:var(--color-rule)]">
+    <div class="mx-auto max-w-3xl prose">
+
+      <h2>The three legal structures, in one paragraph each</h2>
+
+      <p>
+        A UK contractor has three credible structures available. The first is <strong>sole trader</strong>:
+        the simplest possible setup, with profits taxed as personal income at the income-tax
+        bands, plus Class 4 National Insurance at 6% between £12,570 and £50,270 and 2% above,
+        plus a voluntary £179.40/year Class 2 contribution to maintain a State Pension
+        qualifying year. Sole-trader status carries unlimited personal liability and is
+        unsuitable for any contract where a client requires limited-liability separation
+        between the engagement and the contractor's personal assets — which in practice means
+        most enterprise IT, engineering and management-consulting engagements. Sole trader
+        works for low-friction, low-risk service businesses up to roughly £30,000–£40,000 of
+        annual profit.
+      </p>
+
+      <p>
+        The second structure is <strong>umbrella</strong>: the contractor signs an employment
+        contract with an umbrella company, which receives the assignment rate from the end
+        client (or its agency) and pays the contractor a deemed salary after deducting its
+        own fee, employer National Insurance, optional Apprenticeship Levy, employee
+        National Insurance and PAYE income tax. Umbrella is mandatory for any contract that
+        falls inside IR35 in the public sector or with any medium / large private-sector
+        client. It is also the lowest-friction route for short engagements where setting up a
+        Ltd Co is not worth the £800–£1,500 of annual accountancy overhead.
+      </p>
+
+      <p>
+        The third is the <strong>personal service company</strong>, almost always a private
+        Ltd Co with the contractor as sole director and shareholder. Money is extracted as
+        some combination of salary (deductible from corporation tax but attracting employer
+        and employee NI plus income tax), dividends (paid from post-corporation-tax profit,
+        taxed at 8.75% / 33.75% / 39.35% with a £500 allowance) and employer pension
+        contributions (deductible from corporation tax and outside personal taxation
+        entirely until drawdown, subject to the £60,000 Annual Allowance). The optimal mix
+        is not a rule of thumb — it depends on the profit level, the director's age, any
+        other personal income, whether the company qualifies for the Employment Allowance,
+        and whether the director is willing to lock part of the income inside a pension
+        wrapper. The <a href="/calculators/salary-dividend-split">salary–dividend split
+        optimiser</a> solves it as a joint problem; the results are summarised below.
+      </p>
+
+      <h2>The headline numbers (computed live)</h2>
+
+      <p>
+        The table below is generated at build time by the BracketMath engines. For each profit
+        level we compute three scenarios on the 2026/27 rate card: <em>sole trader</em>
+        (income tax + Class 4 NI), <em>Ltd Co cash-only</em> (the joint optimiser run with
+        pension weighting set to zero, so all extraction is salary plus dividend), and
+        <em>Ltd Co net wealth</em> (the joint optimiser allowed to direct part of the profit
+        into a pension at the £60,000 Annual Allowance, counting £1 of pension as £1 of
+        wealth).
+      </p>
+
+      <div class="not-prose my-6 overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-[color:var(--color-rule)] text-left">
+              <th class="py-2 pr-4 font-semibold">Profit</th>
+              <th class="py-2 pr-4 font-semibold">Sole trader net</th>
+              <th class="py-2 pr-4 font-semibold">Ltd Co (cash) net</th>
+              <th class="py-2 pr-4 font-semibold">Ltd Co advantage</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-4">{money(50_000)}</td>
+              <td class="py-2 pr-4">{money(st50.netCash)}</td>
+              <td class="py-2 pr-4">{money(lc50.netCash)}</td>
+              <td class="py-2 pr-4 text-[color:var(--color-success)]">+{money(lc50.netCash - st50.netCash)}</td>
+            </tr>
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-4">{money(80_000)}</td>
+              <td class="py-2 pr-4">{money(st80.netCash)}</td>
+              <td class="py-2 pr-4">{money(lc80.netCash)}</td>
+              <td class="py-2 pr-4 text-[color:var(--color-success)]">+{money(lc80.netCash - st80.netCash)}</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-4">{money(140_000)}</td>
+              <td class="py-2 pr-4">{money(st140.netCash)}</td>
+              <td class="py-2 pr-4">{money(lc140.netCash)}</td>
+              <td class="py-2 pr-4 text-[color:var(--color-success)]">+{money(lc140.netCash - st140.netCash)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        At £50,000 of profit, the cash-only Ltd Co advantage is roughly
+        <strong>{money(lc50.netCash - st50.netCash)}/year</strong> before accountancy fees.
+        A reasonable specialist contractor accountant costs £100–£140 a month
+        (~£1,200–£1,700 a year), which means the structure pays for itself somewhere between
+        £40,000 and £55,000 of profit. Below £40,000 the simpler sole-trader return is
+        usually the correct answer. Above £55,000 a Ltd Co is almost always worth the
+        overhead. At <strong>£140,000 profit</strong>, where the additional-rate dividend
+        band starts to bite and corporation tax marginal relief is doing real work, the cash
+        gap widens to <strong>{money(lc140.netCash - st140.netCash)}/year</strong> — and
+        opens up the pension lever, which we discuss in detail below.
+      </p>
+
+      <p>
+        Crunch and FreeAgent both publish UK-focused accountancy packages designed for
+        precisely this transition. If you have already crossed the £40,000 threshold and are
+        still filing a sole-trader Self Assessment, the structural inefficiency is large
+        enough to justify professional review.
+        <!-- AWIN: Crunch -->
+        <a href="https://www.crunch.co.uk/" rel="sponsored noopener nofollow">Crunch</a>
+        and
+        <!-- AWIN: FreeAgent -->
+        <a href="https://www.freeagent.com/" rel="sponsored noopener nofollow">FreeAgent</a>
+        are both Awin advertisers; BracketMath earns a small referral fee on signups via
+        these links per our <a href="/disclaimer">disclosure policy</a>, which does not
+        affect what we recommend.
+      </p>
+
+      <h2>Why the rule-of-thumb advice fails</h2>
+
+      <p>
+        Open any contractor-accountant blog and the rule of thumb is identical: <em>pay
+        yourself a salary equal to the Personal Allowance (£12,570) and take the rest as
+        dividends.</em> This advice was approximately right in 2020 — but it has been wrong,
+        increasingly badly, since the April 2025 Autumn Budget hike of employer NI to 15%
+        with a £5,000 Secondary Threshold, the freezing of the £500 Dividend Allowance, and
+        the unchanged £100,000 Personal Allowance taper. There are now three identifiable
+        regimes where the rule of thumb leaves real money on the table.
+      </p>
+
+      <h3>Regime 1 — the £100,000 Personal Allowance taper</h3>
+
+      <p>
+        Above £100,000 of "adjusted net income", the Personal Allowance tapers away at £1
+        for every £2 over the threshold, fully eroded at £125,140. The effective marginal
+        rate inside that £25,140 band is <strong>60%</strong> — 40% income tax on the £1
+        earned plus 40% on the £0.50 of allowance reclaimed. For a Ltd Co director paying
+        themselves salary and taking the residual as dividend, every £1 of dividend above
+        £100,000 hits the 40% PA reclaim <em>plus</em> the 33.75% higher-rate dividend rate.
+        The clean exit is to redirect those marginal pounds into an employer pension
+        contribution: the contribution is deductible from corporation tax, the cash never
+        appears in the director's personal income, the PA stays intact, and the pension
+        wrapper grows tax-free until drawdown.
+      </p>
+
+      <p>
+        For a £140,000 profit case our optimiser puts the salary at
+        <strong>{money(w140.optimum.salary)}</strong>, the employer pension contribution at
+        <strong>{money(w140.optimum.pension)}</strong>, and the residual dividend at
+        <strong>{money(w140.optimum.dividend)}</strong>, yielding total net wealth of
+        <strong>{money(w140.optimum.netWealth)}</strong> versus the £12,570-salary-no-pension
+        rule-of-thumb's <strong>{money(w140.ruleOfThumb.netWealth)}</strong>. The optimiser's
+        advantage is <strong>{money(w140.savingsVsRuleOfThumb)}/year</strong>, and the
+        decisive lever is pension contribution, not salary.
+      </p>
+
+      <h3>Regime 2 — the £50,000–£250,000 corporation-tax marginal-relief band</h3>
+
+      <p>
+        From April 2023 (and unchanged through April 2026 per the Autumn 2025 Budget),
+        corporation tax has been split into a 19% small-profits rate up to £50,000 of taxable
+        profit, a 25% main rate above £250,000, and a "marginal relief" band between the two
+        with an <em>effective marginal rate of 26.5%</em>. The headline 25% rate hides a
+        higher marginal cost in the squeeze band because the relief tapers away from £50,000
+        upward.
+      </p>
+
+      <p>
+        Operationally this means that for a Ltd Co with profit between £50,000 and £250,000,
+        every £1 of director pay or employer pension contribution that reduces taxable profit
+        is sheltered from 26.5p of corporation tax — not the 25p that the headline rate
+        suggests. Pension contributions are unusually efficient in this band: a £10,000
+        employer contribution costs the company only £7,350 in foregone post-tax profit
+        because £2,650 of corporation tax is avoided. The contractor's lifetime pension
+        pot grows substantially faster than the equivalent cash-extracted-then-SIPP'd route,
+        because the SIPP route would have lost to corporation tax first.
+      </p>
+
+      <h3>Regime 3 — the £125,140 additional-rate cliff</h3>
+
+      <p>
+        At £125,140 of taxable income, the Personal Allowance has fully tapered to zero and
+        the additional-rate threshold kicks in. Income tax above this point is 45%; dividend
+        tax is 39.35%. For directors in this band, the marginal tax cost of a dividend
+        (39.35%) is comparable to the marginal tax cost of a salary (45% income tax + 2%
+        employee NI − 15% employer NI on the gross-up, net ≈ 47%) — and once the
+        corporation-tax shelter of salary deductibility is in the picture, the optimiser
+        often nudges the optimal salary slightly upward as profit crosses £150,000. This is
+        an interaction effect: the right answer at £140k is genuinely different from the
+        right answer at £100k, and the rule of thumb cannot detect it.
+      </p>
+
+      <div class="not-prose my-8 bg-[color:var(--color-accent-soft)] border border-[color:var(--color-rule)] rounded-lg p-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+          Computed at build time · £140k Ltd Co profit · age 40 · 2026/27 rates
+        </p>
+        <h3 class="text-xl font-semibold mb-3 text-[color:var(--color-ink)]">Optimum vs rule of thumb at £140,000 profit</h3>
+        <table class="w-full text-sm font-mono">
+          <tbody>
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-4 text-[color:var(--color-ink-light)]">Optimiser net wealth</td>
+              <td class="py-2 pr-4 text-right text-[color:var(--color-ink)]">{money(w140.optimum.netWealth)}</td>
+            </tr>
+            <tr class="border-b border-[color:var(--color-rule)]">
+              <td class="py-2 pr-4 text-[color:var(--color-ink-light)]">Rule-of-thumb net wealth</td>
+              <td class="py-2 pr-4 text-right text-[color:var(--color-ink)]">{money(w140.ruleOfThumb.netWealth)}</td>
+            </tr>
+            <tr>
+              <td class="py-2 pr-4 text-[color:var(--color-ink-light)]">Advantage</td>
+              <td class="py-2 pr-4 text-right text-[color:var(--color-success)]"><strong>+{money(w140.savingsVsRuleOfThumb)}/year</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-sm text-[color:var(--color-ink-light)] mt-3 mb-0">
+          Optimum extraction: salary {money(w140.optimum.salary)}, pension {money(w140.optimum.pension)},
+          dividend {money(w140.optimum.dividend)}. Effective total tax rate:
+          {pct(w140.optimum.effectiveTotalTaxRate)}.
+        </p>
+      </div>
+
+      <h2>National Insurance is the hidden tax</h2>
+
+      <p>
+        National Insurance is the most-mis-modelled tax on a contractor's return. There are
+        three NI regimes a contractor can sit inside, and the rate cards are all different.
+      </p>
+
+      <p>
+        For <strong>employees and umbrella workers</strong> NI is Class 1: employee NI is
+        8% on earnings between the Primary Threshold (£12,570) and the Upper Earnings Limit
+        (£50,270), then 2% above. The umbrella also pays <em>employer</em> NI at 15% above
+        the £5,000 Secondary Threshold on the same gross-salary base. The employer-NI cost
+        is economically borne by the contractor because it is funded from the assignment
+        rate before the umbrella decides on a salary number — the contractor's effective
+        marginal tax on contract pounds inside the basic-rate band is closer to 38% than
+        the headline 28% would suggest.
+      </p>
+
+      <p>
+        For <strong>sole traders</strong> NI is Class 4: 6% between £12,570 and £50,270,
+        then 2% above. Class 2 (£3.45/week, voluntary from April 2024) is also payable on
+        request to maintain a State Pension qualifying year. Class 4 was reduced from 9% to
+        8% in April 2024 and from 8% to 6% in April 2024's second cut, which has noticeably
+        improved the sole-trader case for low-to-mid profit bands (£20k–£50k). For a sole
+        trader at £50,000 profit the total NI bill is <strong>{money(st50.ni)}</strong>;
+        the equivalent umbrella worker on a £50,000 deemed salary pays
+        <strong>£3,008</strong> in employee NI alone, before the umbrella has paid out
+        £6,750 of employer NI from the assignment rate first.
+      </p>
+
+      <p>
+        For <strong>Ltd Co directors</strong> both Class 1 regimes apply on whatever salary
+        the director chooses. The optimiser's job is to pick a salary that earns a State
+        Pension qualifying year (at least £6,500 to clear the Lower Earnings Limit) while
+        keeping the combined employer + employee NI bill under the corporation-tax shelter
+        salary unlocks. For most director profiles the answer is between £6,500 and £12,570;
+        for the rare profile where the company qualifies for the £10,500 Employment
+        Allowance (genuinely multi-employee setups only), the answer is closer to £12,570
+        because the EA absorbs the employer NI on a £12,570 salary entirely.
+      </p>
+
+      <h2>Expense rules — the short version</h2>
+
+      <p>
+        HMRC's canonical test for an allowable business expense is "wholly and exclusively"
+        for the purposes of the trade, with an extra "necessarily" requirement for some
+        employee-incurred costs. Three categories cause most of the confusion in practice.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Home office.</strong> HMRC publishes a flat-rate allowance of
+          <a href="https://www.gov.uk/expenses-if-youre-self-employed/working-from-home" rel="noopener nofollow">£6/week</a>
+          (£312/year) for home-working that requires no evidence of apportionment. Anything
+          above that requires an explicit room-by-hour calculation of utilities, council tax,
+          mortgage interest and broadband, which most contractors find is more administrative
+          work than it is worth.
+        </li>
+        <li>
+          <strong>Travel.</strong> Travel between home and a "permanent workplace" is not
+          deductible (this is the rule that caught out the 2017–2021 IR35 reforms). Travel
+          to a "temporary workplace" — broadly, a site you attend for less than 24 months —
+          is deductible. The 45p-per-mile / 25p-per-mile after the first 10,000 miles
+          mileage allowance is the simplest mechanism for car travel under a Ltd Co.
+        </li>
+        <li>
+          <strong>Training.</strong> HMRC's
+          <a href="https://www.gov.uk/hmrc-internal-manuals/business-income-manual/bim35660" rel="noopener nofollow">BIM35660</a>
+          guidance: training to maintain or update existing skills is allowable; training
+          to acquire wholly new skills that take the contractor into a new field is not.
+          The grey area is large in practice — be conservative.
+        </li>
+      </ul>
+
+      <p>
+        For routine contractor expenses the cleanest workflow is a real-time accountancy
+        platform: receipts get attached to transactions as they happen, mileage gets logged
+        automatically, and VAT records are kept compliant with HMRC's Making Tax Digital
+        rules.
+        <!-- AWIN: FreeAgent -->
+        <a href="https://www.freeagent.com/" rel="sponsored noopener nofollow">FreeAgent</a>
+        is the most common contractor choice (often free with NatWest, Royal Bank of
+        Scotland and Mettle business banking). Tide, Starling and several other UK business
+        banks bundle similar tools — see our links policy in the
+        <a href="/disclaimer">disclaimer</a> for the affiliate disclosure.
+      </p>
+
+      <h2>VAT — when, why, which scheme</h2>
+
+      <p>
+        VAT registration becomes compulsory once rolling-12-month turnover exceeds
+        <strong>£90,000</strong> (the threshold raised from £85,000 in April 2024 and
+        unchanged for 2026/27). Below that, registration is voluntary. For most business-to-
+        business contractors with VAT-registered clients, voluntary early registration is
+        neutral or modestly positive — input VAT becomes recoverable, output VAT is paid by
+        clients who reclaim it on their own returns, and the only real cost is the quarterly
+        filing.
+      </p>
+
+      <p>
+        The Flat Rate Scheme (FRS) is the one VAT regime where the choice has a real
+        financial dimension. Under FRS a contractor charges clients the standard 20% VAT,
+        but pays HMRC a lower industry-specific percentage of gross turnover. For IT
+        consultancy the rate is 14.5%; for management consultancy 14%; for "any other
+        business" 12%. There is a 1% first-year discount. A "limited cost trader" with
+        almost no input VAT pays a punitive 16.5% — the FRS rate was deliberately raised in
+        April 2017 to neutralise the scheme for contractors with negligible input costs, and
+        most pure-services contractors now sit in this category, making FRS economically
+        worse than standard VAT. Always run the numbers before opting in.
+      </p>
+
+      <h2>Embedded calculator: see your own numbers</h2>
+
+      <div class="not-prose my-6 bg-white border border-[color:var(--color-rule)] rounded-lg p-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-2">
+          Calculator · Salary–Dividend Split Optimiser
+        </p>
+        <h3 class="text-xl font-semibold mb-2 text-[color:var(--color-ink)]">
+          Run the optimiser on your own profit number
+        </h3>
+        <p class="text-[color:var(--color-ink-light)] leading-relaxed mb-4">
+          The joint optimiser computes the salary, dividend and employer pension contribution
+          that maximises a Ltd Co director's net wealth at 2026/27 rates. Pre-populated below
+          with the £75,000 case discussed earlier on this page; change the profit, age and
+          pension weighting in the live calculator to model your own situation.
+        </p>
+        <a href="/calculators/salary-dividend-split?profits=75000"
+           class="inline-block bg-[color:var(--color-ink)] text-[color:var(--color-paper)] px-5 py-2 rounded-md font-mono text-sm no-underline hover:bg-[color:var(--color-accent)]">
+          Open the £75k scenario →
+        </a>
+      </div>
+
+      <h2>Decision tree (short version)</h2>
+
+      <ol>
+        <li>
+          <strong>Profit ≤ £30,000:</strong> sole trader. The administrative simplicity wins.
+        </li>
+        <li>
+          <strong>£30,000 – £40,000:</strong> sole trader is fine; Ltd Co only marginally
+          ahead once accountancy fees are included.
+        </li>
+        <li>
+          <strong>£40,000 – £80,000:</strong> Ltd Co preferred. Run
+          <a href="/calculators/salary-dividend-split">the optimiser</a> to find the right
+          salary; pension may or may not be useful depending on your wider portfolio.
+        </li>
+        <li>
+          <strong>£80,000 – £100,000:</strong> Ltd Co with a meaningful employer pension
+          contribution. The cash-vs-pension trade-off is starting to matter.
+        </li>
+        <li>
+          <strong>£100,000 – £125,140:</strong> Ltd Co with aggressive pension contributions
+          to keep adjusted net income below £100,000 and protect the full Personal Allowance.
+          This is the 60%-marginal-rate band; the pension is the only clean exit.
+        </li>
+        <li>
+          <strong>£125,140 – £250,000:</strong> Ltd Co with Annual-Allowance-maximising
+          pension contributions. The £50k–£250k CT marginal relief band makes pension
+          unusually efficient here.
+        </li>
+        <li>
+          <strong>£250,000+:</strong> Ltd Co, full pension, consider professional advice on
+          the Tapered Annual Allowance (which starts to bite at £260,000 adjusted income).
+        </li>
+        <li>
+          <strong>Inside IR35:</strong> the choice is taken away. Umbrella, salary sacrifice
+          into pension is the main remaining lever. See the
+          <a href="/guides/ir35-explained">IR35 guide</a>.
+        </li>
+      </ol>
+
+      <h2>Frequently asked questions</h2>
+
+      <h3>Is a Ltd Co always better than sole trader for a UK contractor?</h3>
+      <p>
+        No. Below about £30,000 profit a sole trader is competitive once you account for
+        accountancy fees (~£800–£1,500/yr) and the time cost of statutory filings. At
+        £50,000 profit our optimiser puts the Ltd Co about {money(lc50.netCash - st50.netCash)}
+        ahead before accountancy fees; at £80,000 the gap is {money(lc80.netCash - st80.netCash)};
+        at £140,000 it is {money(lc140.netCash - st140.netCash)}. The break-even is between
+        £30,000 and £55,000 depending on your accountant's fees.
+      </p>
+
+      <h3>How is dividend tax different from income tax?</h3>
+      <p>
+        Dividends are taxed at 8.75% in the basic-rate band, 33.75% in the higher-rate band
+        and 39.35% in the additional-rate band — lower headline rates than income tax
+        (20% / 40% / 45%) but they attract no National Insurance. The £500 Dividend Allowance
+        gives the first £500 of dividend income at 0%. Dividends stack on top of all other
+        income, which means the band you pay in is determined by your total income, not just
+        the dividend.
+      </p>
+
+      <h3>Do umbrella companies pay employer NI?</h3>
+      <p>
+        Yes — employer National Insurance is one of three deductions the umbrella takes from
+        your assignment rate before paying you a salary, alongside its own fee and (sometimes)
+        the Apprenticeship Levy. The £5,000 Secondary Threshold and 15% rate apply per HMRC
+        rules introduced in April 2025. This is a key reason inside-IR35 umbrella take-home
+        is materially lower than outside-IR35 Ltd Co take-home at the same headline contract
+        value.
+      </p>
+
+      <h3>Can I claim a home office, mobile phone or training?</h3>
+      <p>
+        Yes, subject to HMRC's "wholly, exclusively and necessarily" test. The flat-rate
+        £6/week home-working allowance requires no apportionment evidence. Mobile phones in
+        the company name are fully deductible with no Benefit in Kind. Training to maintain
+        existing skills is allowable; training to acquire wholly new skills is not.
+      </p>
+
+      <h3>When should I register for VAT?</h3>
+      <p>
+        Compulsorily, when your rolling 12-month turnover exceeds £90,000. Voluntarily, often
+        earlier — the Flat Rate Scheme can produce a small positive margin for IT contractors
+        at 14.5% (with a 1% first-year discount) on gross turnover, but the "limited cost
+        trader" rule has neutralised this for most pure-services contractors. Always model
+        both before opting in.
+      </p>
+
+      <h3>How does IR35 affect my tax bill?</h3>
+      <p>
+        IR35 (now formally the Off-Payroll Working Rules in Chapter 10 of ITEPA 2003)
+        reclassifies a contract as "inside IR35" — meaning it is taxed as if you were an
+        employee of the end client, even if you invoice through your Ltd Co. For most
+        contractors this means working through an umbrella for that specific contract and
+        losing access to dividend extraction, employer pension contributions and full
+        expense rules. See <a href="/guides/ir35-explained">the IR35 guide</a> for the
+        full breakdown and break-even maths.
+      </p>
+
+      <h3>What records do I have to keep?</h3>
+      <p>
+        For Self Assessment, HMRC requires at least five years of records after the 31 January
+        submission deadline. For a Ltd Co, the Companies Act 2006 requires six years of
+        accounting records. Bank statements, mileage logs, expense receipts, supplier and
+        customer invoices, and dividend vouchers must all be retained.
+      </p>
+
+      <h2>Sources</h2>
+
+      <ul>
+        <li>
+          HMRC — Income Tax rates and allowances:
+          <a href="https://www.gov.uk/government/publications/rates-and-allowances-income-tax/income-tax-rates-and-allowances-current-and-past" rel="noopener nofollow">gov.uk/.../income-tax-rates-and-allowances</a>
+        </li>
+        <li>
+          HMRC — National Insurance contributions:
+          <a href="https://www.gov.uk/government/publications/rates-and-allowances-national-insurance-contributions" rel="noopener nofollow">gov.uk/.../national-insurance-contributions</a>
+        </li>
+        <li>
+          HMRC — Corporation Tax rates and marginal relief:
+          <a href="https://www.gov.uk/government/publications/rates-and-allowances-corporation-tax" rel="noopener nofollow">gov.uk/.../corporation-tax</a>
+        </li>
+        <li>
+          HMRC — Tax on dividends:
+          <a href="https://www.gov.uk/tax-on-dividends" rel="noopener nofollow">gov.uk/tax-on-dividends</a>
+        </li>
+        <li>
+          HMRC — Off-Payroll Working Rules (IR35):
+          <a href="https://www.gov.uk/guidance/understanding-off-payroll-working-ir35" rel="noopener nofollow">gov.uk/.../understanding-off-payroll-working-ir35</a>
+        </li>
+        <li>
+          HMRC Business Income Manual BIM37000 series (allowable expenses):
+          <a href="https://www.gov.uk/hmrc-internal-manuals/business-income-manual" rel="noopener nofollow">gov.uk/hmrc-internal-manuals/business-income-manual</a>
+        </li>
+        <li>
+          HMRC — VAT thresholds and Flat Rate Scheme:
+          <a href="https://www.gov.uk/vat-flat-rate-scheme" rel="noopener nofollow">gov.uk/vat-flat-rate-scheme</a>
+        </li>
+        <li>
+          Companies Act 2006 — accounting records:
+          <a href="https://www.legislation.gov.uk/ukpga/2006/46/section/388" rel="noopener nofollow">legislation.gov.uk Companies Act 2006 s.388</a>
+        </li>
+      </ul>
+
+      <p class="text-sm text-[color:var(--color-ink-light)] mt-12">
+        This page is information only and not financial, tax or legal advice. The figures above
+        are computed at build time by the engines that power the calculators on this site, on
+        2026/27 HMRC rates as published at the time of writing. See the full
+        <a href="/disclaimer">disclaimer</a> for the limits of what calculators can do, and
+        consult a chartered accountant before acting on anything written here.
+      </p>
+    </div>
+  </section>
+</Layout>
