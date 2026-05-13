@@ -1,0 +1,166 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import SoleTraderTax from '../../components/calculators/SoleTraderTax.tsx';
+
+const url = 'https://bracketmath.co.uk/calculators/sole-trader-tax';
+---
+<Layout
+  title="Sole Trader Tax Calculator (UK 2026/27): Income Tax + Class 4 + Should You Incorporate?"
+  description="Free UK sole-trader tax calculator for 2026/27. Computes income tax, Class 4 NI, optional Class 2 voluntary contributions, and the trading-allowance vs actual-expenses decision automatically. Built-in Ltd Co break-even — at what profit level should you incorporate?"
+  canonical={url}
+>
+  <JsonLd
+    article={{
+      headline: 'Sole Trader Tax Calculator (UK 2026/27): Income Tax + Class 4 + Should You Incorporate?',
+      description:
+        'A 2026/27 UK sole-trader tax calculator that automates the trading-allowance vs actual-expenses decision and bisects the Ltd Co incorporation break-even.',
+      datePublished: '2026-04-06',
+      url,
+      keywords: [
+        'sole trader tax calculator',
+        'self employed tax uk',
+        'class 4 ni',
+        'trading allowance',
+        'should i incorporate',
+        '2026/27',
+      ],
+    }}
+    howTo={{
+      name: 'How to use the sole-trader tax calculator',
+      description: 'Four steps to compute sole-trader net cash, the trading-allowance recommendation, and the Ltd Co incorporation break-even.',
+      totalTime: 'PT2M',
+      steps: [
+        { name: 'Enter your turnover', text: 'Total gross income from the self-employment activity for the 2026/27 tax year — before any deductions.' },
+        { name: 'Enter actual business expenses', text: 'Wholly-and-exclusively business costs: equipment, insurance, software, accountancy, training that maintains skills, the simplified home-office flat rate, etc. The engine will compare this against the £1,000 flat trading allowance and apply whichever is better.' },
+        { name: 'Add other income that stacks below', text: 'PAYE salary from a day job, rental income, pensions — anything else on your Self Assessment. The engine stacks this below your trading profits in the income-tax band schedule.' },
+        { name: 'Decide on voluntary Class 2 + read the Ltd Co comparison', text: 'Class 2 voluntary at £179.40/yr buys a State Pension qualifying year (often worth it). The incorporation comparison runs the same turnover through the joint Ltd Co optimiser and bisects for the profit level at which the routes swap.' },
+      ],
+    }}
+    faq={[
+      {
+        question: 'When does the £1,000 trading allowance beat actual expenses?',
+        answer:
+          'Strictly whenever actual business expenses are below £1,000. Below that threshold the £1,000 flat deduction is straightforwardly better. The engine compares the two paths and picks whichever produces lower taxable profits.',
+      },
+      {
+        question: 'Is voluntary Class 2 worth £179.40/yr?',
+        answer:
+          'Usually yes. Class 2 voluntary contributions cost £3.45/wk (£179.40/yr) and buy a State Pension qualifying year. The Full New State Pension is £230.25/wk (£11,973/yr) and needs 35 qualifying years. One year of voluntary Class 2 buys roughly £342 of annual State Pension at retirement — a payback period of about 6 months on first claim.',
+      },
+      {
+        question: 'At what profit level should I incorporate?',
+        answer:
+          'Pure-tax break-even is usually between £30k and £50k of profit, depending on expenses and other income. The calculator bisects for the exact number. Note that Ltd Co adds ~£800–£1,500/yr of accountancy / filing overhead which a sole trader does not pay — net the tax gain against that before incorporating.',
+      },
+      {
+        question: 'Why does the income tax figure not match HMRC\'s calculation if I have other income?',
+        answer:
+          'It does — the engine computes income tax on the total of (taxable profits + other income), then pro-rates the share attributable to the self-employment by the income ratio. HMRC does it on the same total but reports a single tax figure; this calculator shows the sole-trader share specifically so the comparison with the Ltd Co route is apples-to-apples.',
+      },
+      {
+        question: 'Are student loan repayments included?',
+        answer:
+          'No. Student Loan repayments (Plan 1 / 2 / 4 / 5 / Postgraduate) are not modelled. Plan 2 at 9% above £27,295 would add roughly 9p of marginal cost to each £1 of taxable income above the threshold — add to the marginal rate shown if you have an outstanding loan.',
+      },
+      {
+        question: 'Does it model VAT?',
+        answer:
+          'No. Mandatory VAT registration kicks in once taxable turnover crosses £90,000 in any rolling 12-month period. Below that it is voluntary. The income-tax / NI math on this calculator is unaffected by VAT registration.',
+      },
+    ]}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Calculators', url: 'https://bracketmath.co.uk/calculators' },
+      { name: 'Sole Trader Tax', url },
+    ]}
+  />
+
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-6xl">
+      <nav class="text-sm mb-6" aria-label="Breadcrumb">
+        <a
+          href="/"
+          class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline"
+          >Home</a
+        >
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span class="text-[color:var(--color-ink-light)]">Calculators</span>
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>Sole Trader Tax</span>
+      </nav>
+
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        UK Tax Year 2026/27 · Self-Employed (rUK)
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        Sole Trader Tax
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] mb-8 max-w-3xl">
+        Computes income tax, Class 4 NI and optional Class 2 voluntary
+        contributions for the 2026/27 tax year. Automates the £1,000 trading
+        allowance vs actual expenses decision. Built-in Ltd Co incorporation
+        break-even — at what profit level should you incorporate? — by bisection.
+      </p>
+
+      <SoleTraderTax client:load />
+
+      <section class="mt-16 prose prose-lg max-w-3xl">
+        <h2>The trading-allowance choice in one paragraph</h2>
+        <p>
+          The £1,000 trading allowance under ITTOIA 2005 s.783A is a flat
+          deduction available in lieu of claiming actual expenses. It strictly
+          beats actual expenses whenever actual expenses are below £1,000. The
+          engine compares the two paths and applies the lower-tax option — so
+          if you have £300 of actual costs but enter them as £300, the
+          calculator silently switches to the trading allowance and saves you
+          (£1,000 − £300) × marginal rate in tax. The recommendation appears in
+          the notes panel.
+        </p>
+
+        <h2>The Class 4 NI band schedule</h2>
+        <p>
+          For 2026/27: 6% on profits between the Lower Profits Limit (£12,570)
+          and the Upper Profits Limit (£50,270), then 2% on profits above
+          £50,270 (HMRC NIM24001). Class 2 is no longer compulsory above the
+          Small Profits Threshold but remains payable on a voluntary basis at
+          £3.45/wk (£179.40/yr) to maintain a State Pension qualifying year.
+        </p>
+
+        <h2>Why "should I incorporate?" is a bisection problem</h2>
+        <p>
+          The function <code>f(t) = ltdCoNetCash(t) − soleTraderNetCash(t)</code>
+          is the gap in £/yr of net cash between operating as a Ltd Co director
+          (running the full salary–dividend–pension optimiser) and operating as
+          a sole trader (income tax + Class 4 NI on profits), at turnover
+          <code>t</code>. At very low turnover the gap is small or negative
+          (sole-trader simplicity dominates); at high turnover the gap is
+          materially positive (Ltd Co dividend-band machinery dominates). The
+          break-even is the turnover at which the gap is zero. The calculator
+          bisects on the £15k–£400k range with 35 iterations — accurate to
+          within roughly £100 of net cash.
+        </p>
+
+        <p>
+          For the same engine driven across 200+ profession × income × structure
+          combinations, see the <a href="/pay">programmatic /pay pages</a>.
+        </p>
+
+        <h2>What this calculator does not model</h2>
+        <ul>
+          <li>Student loan repayments (Plan 1 / 2 / 4 / 5 / Postgraduate).</li>
+          <li>The High Income Child Benefit Charge (HICBC).</li>
+          <li>VAT (mandatory above £90,000 of taxable turnover from 1 April 2024).</li>
+          <li>Scottish income-tax bands.</li>
+          <li>Capital allowances on plant / machinery / vehicles — the engine treats them as part of "actual expenses".</li>
+        </ul>
+
+        <p>
+          The full conventions / methodology / source citations for the BracketMath
+          engines are at <a href="/about">/about</a>. The disclaimer for all
+          BracketMath outputs is at <a href="/disclaimer">/disclaimer</a>.
+        </p>
+      </section>
+    </div>
+  </section>
+</Layout>

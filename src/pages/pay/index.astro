@@ -1,0 +1,125 @@
+---
+/**
+ * Index page for the `/pay/*` programmatic-SEO cluster.
+ *
+ * Lists every page generated from `src/data/pages.csv` (first batch only —
+ * gated by the same BATCH_1_MAX_PAGES cap as the [...slug].astro route).
+ * Acts as both a sitemap-like hub and a topic-cluster anchor.
+ */
+
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { loadPseoRows } from '../../lib/pseo/load';
+
+const BATCH_1_MAX_PAGES = 200;
+
+const allRows = loadPseoRows();
+const batch = allRows.slice(0, BATCH_1_MAX_PAGES);
+
+const url = 'https://bracketmath.co.uk/pay';
+
+const money = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
+
+// Group by structure for the listing.
+const byStructure = {
+  ltd_co: batch.filter((r) => r.structure === 'ltd_co'),
+  umbrella: batch.filter((r) => r.structure === 'umbrella'),
+  sole_trader: batch.filter((r) => r.structure === 'sole_trader'),
+};
+---
+<Layout
+  title="UK Tax Pages by Profession & Income (2026/27)"
+  description="Programmatic UK tax pages for 200 profession × income × structure combinations. Each page renders its numbers from the BracketMath joint-optimiser, IR35-comparison and sole-trader engines at build time. 2026/27 rates throughout."
+  canonical={url}
+>
+  <JsonLd
+    article={{
+      headline: 'UK Tax Pages by Profession & Income (2026/27)',
+      description:
+        'Index page for the BracketMath /pay/* cluster: 200 build-time-computed tax pages, one per profession × income × structure combination, drawn from a single CSV seed.',
+      datePublished: '2026-04-06',
+      url,
+      keywords: ['uk tax by profession', 'contractor tax calculator', '2026/27'],
+    }}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Pay (by profession)', url },
+    ]}
+  />
+
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-5xl">
+      <nav class="text-sm mb-6" aria-label="Breadcrumb">
+        <a
+          href="/"
+          class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline"
+          >Home</a
+        >
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>Pay (by profession)</span>
+      </nav>
+
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        UK Tax Year 2026/27 · {batch.length} build-time-computed pages
+      </p>
+      <h1 class="text-3xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-6">
+        UK tax by profession, income and structure
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] mb-4">
+        Each page below renders its numbers from the same engines that power
+        the live calculators: the joint salary-dividend optimiser, the inside-vs-outside-IR35
+        comparison, and the sole-trader engine. Inputs are read at build time
+        from a single CSV row; outputs are computed afresh on every deploy.
+      </p>
+      <p class="text-base text-[color:var(--color-ink-light)] mb-12">
+        For the methodology behind the pages, see the
+        <a href="/guides/uk-contractor-tax" class="text-[color:var(--color-accent)]">UK contractor tax guide</a>
+        and the
+        <a href="/guides/ltd-company-director-tax" class="text-[color:var(--color-accent)]">Ltd Co director tax guide</a>.
+        For interactive versions, see the
+        <a href="/calculators/salary-dividend-split" class="text-[color:var(--color-accent)]">salary–dividend split</a>,
+        <a href="/calculators/take-home" class="text-[color:var(--color-accent)]">take-home</a> and
+        <a href="/calculators/sipp-optimiser" class="text-[color:var(--color-accent)]">SIPP optimiser</a> calculators.
+      </p>
+
+      <h2 class="text-2xl font-bold mb-4 text-[color:var(--color-ink)]">
+        Personal Ltd Co ({byStructure.ltd_co.length} pages)
+      </h2>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-12 text-sm">
+        {byStructure.ltd_co.map((r) => (
+          <li>
+            <a href={`/pay/${r.slug}`} class="text-[color:var(--color-accent)] hover:underline">
+              {r.professionLabel} on {money(r.grossIncome)}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="text-2xl font-bold mb-4 text-[color:var(--color-ink)]">
+        Inside-IR35 Umbrella ({byStructure.umbrella.length} pages)
+      </h2>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-12 text-sm">
+        {byStructure.umbrella.map((r) => (
+          <li>
+            <a href={`/pay/${r.slug}`} class="text-[color:var(--color-accent)] hover:underline">
+              {r.professionLabel} on {money(r.grossIncome)}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="text-2xl font-bold mb-4 text-[color:var(--color-ink)]">
+        Sole Trader ({byStructure.sole_trader.length} pages)
+      </h2>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-12 text-sm">
+        {byStructure.sole_trader.map((r) => (
+          <li>
+            <a href={`/pay/${r.slug}`} class="text-[color:var(--color-accent)] hover:underline">
+              {r.professionLabel} on {money(r.grossIncome)}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Layout>

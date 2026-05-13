@@ -1,0 +1,297 @@
+---
+/**
+ * Programmatic-SEO route — one page per CSV row in `src/data/pages.csv`.
+ *
+ * Implements the 7-layer variance model from MASTER-PLAN §11.5:
+ *   1. Computed numerics from the engines (no static lookup).
+ *   2. 10 narrative templates (templates.ts), picked by fnv1a(slug) mod 10.
+ *   3. 5 FAQs drawn from a pool of ~50, deterministic by slug + tag match.
+ *   4. "Why your situation is different" computed paragraph (render.ts).
+ *   5. Persona-specific comparison table (render.ts).
+ *   6. 5 most-similar internal links by weighted distance (render.ts).
+ *   7. Persona-specific JSON-LD (HowTo for optimisers, FinancialProduct
+ *      for pre-retirees, none for lifestyle).
+ *
+ * Gating: per MASTER-PLAN §9 Phase 4b ("indexing-rate gate") only the first
+ * 200 rows are emitted at build time. The CSV may contain more candidates;
+ * subsequent batches lift the slice in line with the indexing-rate ritual.
+ */
+
+import Layout from '../../layouts/Layout.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { loadPseoRows } from '../../lib/pseo/load';
+import { computeFor } from '../../lib/pseo/compute';
+import { pickTemplate } from '../../lib/pseo/templates';
+import { pickFaqs } from '../../lib/pseo/faqs';
+import {
+  whatsDifferent,
+  personaTable,
+  similarPages,
+  personaJsonLd,
+} from '../../lib/pseo/render';
+import { indexFor } from '../../lib/pseo/hash';
+
+export async function getStaticPaths() {
+  /** Hard cap per the indexing-rate gate (MASTER-PLAN §9 Phase 4b). */
+  const BATCH_1_MAX_PAGES = 200;
+  const allRows = loadPseoRows();
+  const batch = allRows.slice(0, BATCH_1_MAX_PAGES);
+  // Pre-compute every row's `Computed` so the layer-4 "what's different"
+  // function can look up peer figures without re-running optimisers.
+  const computedByRow = batch.map((row) => ({ row, c: computeFor(row) }));
+
+  return batch.map((row) => ({
+    params: { slug: row.slug },
+    props: {
+      row,
+      peers: computedByRow,
+      allRows: batch,
+    },
+  }));
+}
+
+const { row, peers, allRows } = Astro.props;
+const c = computeFor(row);
+
+const templateIndex = indexFor(row.slug, 10);
+const rendered = pickTemplate(row, c, templateIndex);
+const faqs = pickFaqs(row, c, 5);
+
+const pageUrl = `https://bracketmath.co.uk/pay/${row.slug}`;
+const personaLd = personaJsonLd(row, c, pageUrl);
+
+const tableRows = personaTable(row, c);
+const whyDiff = whatsDifferent(row, c, peers);
+const neighbours = similarPages(row, allRows, 5);
+
+const money = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
+const pct = (n: number) =>
+  (n * 100).toLocaleString('en-GB', { maximumFractionDigits: 1 }) + '%';
+
+const structureLabel =
+  row.structure === 'ltd_co'
+    ? 'Personal Ltd Co'
+    : row.structure === 'umbrella'
+      ? 'Inside-IR35 Umbrella'
+      : 'Sole Trader';
+
+const personaLabel =
+  row.persona === 'optimiser'
+    ? 'Optimiser'
+    : row.persona === 'lifestyle_se'
+      ? 'Lifestyle SE'
+      : 'Pre-retiree';
+
+const headline = `${row.professionLabel} on ${money(row.grossIncome)} — ${structureLabel} 2026/27`;
+
+const description =
+  c.engine === 'ltd_co'
+    ? `Tax-optimised extraction plan for a ${row.professionLabel.toLowerCase()} with £${row.grossIncome.toLocaleString('en-GB')} of company profit in 2026/27. Joint salary–dividend–pension optimum computed at build time from the BracketMath engine. Net cash ${money(c.netCash)}, pension ${money(c.pension)}, effective rate ${pct(c.effectiveRate)}.`
+    : c.engine === 'umbrella'
+      ? `Inside-IR35 umbrella take-home for a ${row.professionLabel.toLowerCase()} at ${money(c.dayRate ?? 0)}/day in 2026/27. Net cash ${money(c.netCash)}, pension ${money(c.pension)}, break-even outside-IR35 day rate ${money(c.breakevenOutsideDayRate ?? 0)}.`
+      : `Sole-trader 2026/27 tax + NI for a ${row.professionLabel.toLowerCase()} with ${money(row.grossIncome)} of turnover. Net cash ${money(c.netCash)} after the trading-allowance / actual-expenses choice, with the Ltd-Co incorporation comparison built in.`;
+---
+<Layout title={headline} description={description} canonical={pageUrl}>
+  <JsonLd
+    article={{
+      headline,
+      description,
+      datePublished: '2026-04-06',
+      url: pageUrl,
+      keywords: [
+        row.profession,
+        row.structure,
+        row.persona,
+        '2026/27',
+        'uk tax',
+        'contractor calculator',
+      ],
+    }}
+    faq={faqs.map((f) => ({ question: f.question, answer: f.answer }))}
+    breadcrumbs={[
+      { name: 'Home', url: 'https://bracketmath.co.uk/' },
+      { name: 'Pay (by profession)', url: 'https://bracketmath.co.uk/pay' },
+      { name: row.professionLabel, url: pageUrl },
+    ]}
+  />
+  {personaLd && (
+    <script type="application/ld+json" set:html={JSON.stringify(personaLd)} />
+  )}
+
+  <section class="px-6 pt-12 pb-6">
+    <div class="mx-auto max-w-4xl">
+      <nav class="text-sm mb-6" aria-label="Breadcrumb">
+        <a
+          href="/"
+          class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline"
+          >Home</a
+        >
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <a
+          href="/pay"
+          class="text-[color:var(--color-ink-light)] hover:text-[color:var(--color-accent)] no-underline"
+          >Pay (by profession)</a
+        >
+        <span class="text-[color:var(--color-ink-light)] mx-2">/</span>
+        <span>{row.professionLabel}</span>
+      </nav>
+
+      <p class="font-mono text-sm uppercase tracking-widest text-[color:var(--color-ink-light)] mb-3">
+        UK Tax Year 2026/27 · {structureLabel} · {personaLabel}
+      </p>
+      <h1 class="text-3xl md:text-5xl font-bold tracking-tight text-[color:var(--color-ink)] leading-tight mb-4">
+        {row.professionLabel} on {money(row.grossIncome)}
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-light)] mb-2">
+        {structureLabel}. {row.ir35Status === 'inside'
+          ? 'Inside IR35.'
+          : row.ir35Status === 'outside'
+            ? 'Outside IR35.'
+            : ''} Age {row.age}.
+        {row.otherIncome > 0
+          ? ` Plus ${money(row.otherIncome)} of other personal income stacking below.`
+          : ''}
+        Pension preference: {row.pensionPref}.
+      </p>
+      <p class="text-base text-[color:var(--color-ink-light)] mb-8">
+        Every figure on this page is computed at build time by the same engines
+        that power the live <a href="/calculators/salary-dividend-split" class="text-[color:var(--color-accent)]">salary–dividend split</a>,
+        <a href="/calculators/take-home" class="text-[color:var(--color-accent)]">take-home</a> and
+        <a href="/calculators/sipp-optimiser" class="text-[color:var(--color-accent)]">SIPP optimiser</a>
+        calculators. Inputs come from a single CSV row; outputs come from the
+        engines. No static lookup tables, no hand-coded numbers.
+      </p>
+
+      <!-- Hero summary card — Layer-1 unique computed numerics. -->
+      <div class="rounded-lg border border-[color:var(--color-rule)] bg-[color:var(--color-paper)] p-6 mb-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-1">
+              Net cash
+            </p>
+            <p class="text-2xl font-bold text-[color:var(--color-ink)]">{money(c.netCash)}</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-1">
+              Pension
+            </p>
+            <p class="text-2xl font-bold text-[color:var(--color-ink)]">{money(c.pension)}</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-1">
+              Effective rate
+            </p>
+            <p class="text-2xl font-bold text-[color:var(--color-ink)]">{pct(c.effectiveRate)}</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-[color:var(--color-ink-light)] mb-1">
+              Marginal rate
+            </p>
+            <p class="text-2xl font-bold text-[color:var(--color-ink)]">{pct(c.marginalRate)}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer-2: narrative template (one of 10, chosen deterministically). -->
+      <article class="prose prose-lg max-w-none mb-12">
+        <h2>{rendered.openingH2}</h2>
+        <div set:html={rendered.mainBody} />
+      </article>
+
+      <!-- Layer-5: persona-specific comparison table. -->
+      <h2 class="text-2xl font-bold mb-4 text-[color:var(--color-ink)]">
+        The numbers, line by line
+      </h2>
+      <div class="overflow-x-auto mb-10">
+        <table class="min-w-full border border-[color:var(--color-rule)]">
+          <tbody>
+            {tableRows.map((tr) => (
+              <tr class="border-b border-[color:var(--color-rule)] last:border-b-0">
+                <td class="px-4 py-3 text-sm text-[color:var(--color-ink-light)]">{tr.label}</td>
+                <td class="px-4 py-3 text-right font-mono text-sm text-[color:var(--color-ink)]">
+                  {tr.value}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Layer-4: "Why your situation is different" — computed peer delta. -->
+      {whyDiff && (
+        <section class="mb-12">
+          <h2 class="text-2xl font-bold mb-4 text-[color:var(--color-ink)]">
+            Why this scenario is different
+          </h2>
+          <div class="prose prose-lg max-w-none" set:html={whyDiff} />
+        </section>
+      )}
+
+      <!-- Layer-3: FAQs — drawn from the 50-item pool by tag match + slug rotation. -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-4 text-[color:var(--color-ink)]">
+          Questions this scenario raises
+        </h2>
+        <div class="space-y-6">
+          {faqs.map((f) => (
+            <div>
+              <h3 class="text-lg font-semibold mb-2 text-[color:var(--color-ink)]">
+                {f.question}
+              </h3>
+              <p class="text-[color:var(--color-ink-light)]" set:html={f.answer} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Layer-6: 5 most-similar internal links. -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-4 text-[color:var(--color-ink)]">
+          Closest peer profiles
+        </h2>
+        <p class="text-[color:var(--color-ink-light)] mb-4">
+          Computed at build time by a weighted distance over profession,
+          structure, persona, age band and gross income. Not the same five
+          links on every page.
+        </p>
+        <ul class="space-y-2">
+          {neighbours.map((n) => (
+            <li>
+              <a
+                href={`/pay/${n.slug}`}
+                class="text-[color:var(--color-accent)] hover:underline"
+              >
+                {n.professionLabel} on {money(n.grossIncome)} ({n.structure === 'ltd_co' ? 'Ltd Co' : n.structure === 'umbrella' ? 'Umbrella' : 'Sole trader'})
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- Methodology footer (mirrors the calculators / guides). -->
+      <section class="mt-16 pt-8 border-t border-[color:var(--color-rule)]">
+        <h2 class="text-xl font-bold mb-3 text-[color:var(--color-ink)]">Methodology</h2>
+        <p class="text-sm text-[color:var(--color-ink-light)] mb-2">
+          Income tax, National Insurance and Corporation Tax bands taken from
+          HMRC's 2026/27 rates and allowances tables
+          (<a href="https://www.gov.uk/government/publications/rates-and-allowances-income-tax" rel="noopener nofollow" class="text-[color:var(--color-accent)]">gov.uk/.../income-tax</a>;
+          <a href="https://www.gov.uk/government/publications/rates-and-allowances-corporation-tax" rel="noopener nofollow" class="text-[color:var(--color-accent)]">corporation-tax</a>).
+          Pension Annual Allowance and taper rules from Finance Act 2004 / 2023.
+          Trading allowance per ITTOIA 2005 s.783A. Voluntary Class 2 figure
+          (£179.40/yr = £3.45/wk × 52) from <a href="https://www.gov.uk/voluntary-national-insurance-contributions" rel="noopener nofollow" class="text-[color:var(--color-accent)]">HMRC voluntary NI guidance</a>.
+        </p>
+        <p class="text-sm text-[color:var(--color-ink-light)] mb-2">
+          Style: 2026/27 tax year throughout; figures rounded to whole pounds
+          in the user-facing prose; effective rates computed as
+          (deductions / gross). The voice is methodological — no first person,
+          no claimed credentials, no marketing fluff.
+        </p>
+        <p class="text-sm text-[color:var(--color-ink-light)]">
+          This page is not personalised advice; for advice regulated by the FCA,
+          consult an adviser registered with the Financial Conduct Authority.
+          See the full <a href="/disclaimer" class="text-[color:var(--color-accent)]">disclaimer</a>.
+        </p>
+      </section>
+    </div>
+  </section>
+</Layout>

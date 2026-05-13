@@ -1,0 +1,201 @@
+﻿slug,profession,profession_label,gross_income,age,age_band,structure,ir35_status,pension_pref,other_income,region,persona
+software-contractor-ltd-outside-ir35-60k,software_contractor,Software contractor,60000,32,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-75k,software_contractor,Software contractor,75000,34,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-90k,software_contractor,Software contractor,90000,36,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-100k,software_contractor,Software contractor,100000,38,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-110k,software_contractor,Software contractor,110000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-125k,software_contractor,Software contractor,125000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-140k,software_contractor,Software contractor,140000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-160k,software_contractor,Software contractor,160000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-180k,software_contractor,Software contractor,180000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-220k,software_contractor,Software contractor,220000,44,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-75k-no-pension,software_contractor,Software contractor,75000,28,under_30,ltd_co,outside,none,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-100k-no-pension,software_contractor,Software contractor,100000,30,under_30,ltd_co,outside,none,0,eng_ni_wales,optimiser
+software-contractor-ltd-outside-ir35-140k-aged-50,software_contractor,Software contractor,140000,50,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+software-contractor-ltd-outside-ir35-180k-aged-52,software_contractor,Software contractor,180000,52,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+it-contractor-ltd-outside-ir35-65k,it_contractor,IT contractor,65000,33,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+it-contractor-ltd-outside-ir35-80k,it_contractor,IT contractor,80000,35,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+it-contractor-ltd-outside-ir35-95k,it_contractor,IT contractor,95000,37,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+it-contractor-ltd-outside-ir35-110k,it_contractor,IT contractor,110000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+it-contractor-ltd-outside-ir35-130k,it_contractor,IT contractor,130000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+it-contractor-ltd-outside-ir35-150k,it_contractor,IT contractor,150000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+it-contractor-ltd-outside-ir35-180k,it_contractor,IT contractor,180000,44,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+it-contractor-ltd-outside-ir35-200k,it_contractor,IT contractor,200000,46,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+it-contractor-ltd-outside-ir35-250k-aged-55,it_contractor,IT contractor,250000,55,55_plus,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+devops-contractor-ltd-outside-ir35-90k,devops_contractor,DevOps contractor,90000,34,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+devops-contractor-ltd-outside-ir35-120k,devops_contractor,DevOps contractor,120000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+devops-contractor-ltd-outside-ir35-150k,devops_contractor,DevOps contractor,150000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+devops-contractor-ltd-outside-ir35-180k,devops_contractor,DevOps contractor,180000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+data-scientist-contractor-ltd-outside-ir35-90k,data_scientist_contractor,Data scientist contractor,90000,32,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+data-scientist-contractor-ltd-outside-ir35-115k,data_scientist_contractor,Data scientist contractor,115000,34,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+data-scientist-contractor-ltd-outside-ir35-140k,data_scientist_contractor,Data scientist contractor,140000,36,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+data-scientist-contractor-ltd-outside-ir35-170k,data_scientist_contractor,Data scientist contractor,170000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+data-scientist-contractor-ltd-outside-ir35-200k,data_scientist_contractor,Data scientist contractor,200000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+cybersecurity-contractor-ltd-outside-ir35-110k,cybersecurity_contractor,Cybersecurity contractor,110000,36,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+cybersecurity-contractor-ltd-outside-ir35-140k,cybersecurity_contractor,Cybersecurity contractor,140000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+cybersecurity-contractor-ltd-outside-ir35-180k,cybersecurity_contractor,Cybersecurity contractor,180000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+cybersecurity-contractor-ltd-outside-ir35-220k,cybersecurity_contractor,Cybersecurity contractor,220000,46,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+cloud-architect-contractor-ltd-outside-ir35-130k,cloud_architect_contractor,Cloud architect contractor,130000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+cloud-architect-contractor-ltd-outside-ir35-160k,cloud_architect_contractor,Cloud architect contractor,160000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+cloud-architect-contractor-ltd-outside-ir35-200k,cloud_architect_contractor,Cloud architect contractor,200000,44,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+cloud-architect-contractor-ltd-outside-ir35-240k,cloud_architect_contractor,Cloud architect contractor,240000,46,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+management-consultant-ltd-outside-ir35-90k,management_consultant,Management consultant,90000,32,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+management-consultant-ltd-outside-ir35-120k,management_consultant,Management consultant,120000,36,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+management-consultant-ltd-outside-ir35-150k,management_consultant,Management consultant,150000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+management-consultant-ltd-outside-ir35-180k,management_consultant,Management consultant,180000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+management-consultant-ltd-outside-ir35-220k,management_consultant,Management consultant,220000,44,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+management-consultant-ltd-outside-ir35-280k,management_consultant,Management consultant,280000,48,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+management-consultant-ltd-outside-ir35-350k,management_consultant,Management consultant,350000,52,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+engineering-contractor-ltd-outside-ir35-70k,engineering_contractor,Engineering contractor,70000,32,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+engineering-contractor-ltd-outside-ir35-90k,engineering_contractor,Engineering contractor,90000,36,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+engineering-contractor-ltd-outside-ir35-120k,engineering_contractor,Engineering contractor,120000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+engineering-contractor-ltd-outside-ir35-150k,engineering_contractor,Engineering contractor,150000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+engineering-contractor-ltd-outside-ir35-180k-aged-50,engineering_contractor,Engineering contractor,180000,50,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+finance-contractor-ltd-outside-ir35-100k,finance_contractor,Finance contractor,100000,34,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+finance-contractor-ltd-outside-ir35-130k,finance_contractor,Finance contractor,130000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+finance-contractor-ltd-outside-ir35-160k,finance_contractor,Finance contractor,160000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+finance-contractor-ltd-outside-ir35-200k,finance_contractor,Finance contractor,200000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+finance-contractor-ltd-outside-ir35-280k,finance_contractor,Finance contractor,280000,48,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+project-manager-contractor-ltd-outside-ir35-80k,project_manager_contractor,Project manager contractor,80000,34,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+project-manager-contractor-ltd-outside-ir35-110k,project_manager_contractor,Project manager contractor,110000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+project-manager-contractor-ltd-outside-ir35-140k,project_manager_contractor,Project manager contractor,140000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+product-manager-contractor-ltd-outside-ir35-110k,product_manager_contractor,Product manager contractor,110000,36,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+product-manager-contractor-ltd-outside-ir35-150k,product_manager_contractor,Product manager contractor,150000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+marketing-consultant-ltd-outside-ir35-65k,marketing_consultant,Marketing consultant,65000,32,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+marketing-consultant-ltd-outside-ir35-90k,marketing_consultant,Marketing consultant,90000,36,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+marketing-consultant-ltd-outside-ir35-120k,marketing_consultant,Marketing consultant,120000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+sap-consultant-ltd-outside-ir35-110k,sap_consultant,SAP consultant,110000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+sap-consultant-ltd-outside-ir35-150k,sap_consultant,SAP consultant,150000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+sap-consultant-ltd-outside-ir35-180k,sap_consultant,SAP consultant,180000,44,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+salesforce-consultant-ltd-outside-ir35-100k,salesforce_consultant,Salesforce consultant,100000,34,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+salesforce-consultant-ltd-outside-ir35-130k,salesforce_consultant,Salesforce consultant,130000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+salesforce-consultant-ltd-outside-ir35-170k,salesforce_consultant,Salesforce consultant,170000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+business-analyst-contractor-ltd-outside-ir35-75k,business_analyst_contractor,Business analyst contractor,75000,34,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+business-analyst-contractor-ltd-outside-ir35-100k,business_analyst_contractor,Business analyst contractor,100000,38,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+business-analyst-contractor-ltd-outside-ir35-130k,business_analyst_contractor,Business analyst contractor,130000,40,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+test-engineer-contractor-ltd-outside-ir35-70k,test_engineer_contractor,Test engineer contractor,70000,34,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+test-engineer-contractor-ltd-outside-ir35-95k,test_engineer_contractor,Test engineer contractor,95000,38,30_to_45,ltd_co,outside,modest,0,eng_ni_wales,optimiser
+test-engineer-contractor-ltd-outside-ir35-120k,test_engineer_contractor,Test engineer contractor,120000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+architect-contractor-ltd-outside-ir35-110k,architect_contractor,Architect contractor,110000,38,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+architect-contractor-ltd-outside-ir35-150k,architect_contractor,Architect contractor,150000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+agile-coach-contractor-ltd-outside-ir35-130k,agile_coach_contractor,Agile coach contractor,130000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+agile-coach-contractor-ltd-outside-ir35-160k,agile_coach_contractor,Agile coach contractor,160000,44,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+oil-gas-contractor-ltd-outside-ir35-150k,oil_gas_contractor,Oil & gas contractor,150000,42,30_to_45,ltd_co,outside,aggressive,0,eng_ni_wales,optimiser
+oil-gas-contractor-ltd-outside-ir35-220k,oil_gas_contractor,Oil & gas contractor,220000,46,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+software-contractor-umbrella-inside-ir35-400-day-rate,software_contractor,Software contractor,88000,32,30_to_45,umbrella,inside,modest,0,eng_ni_wales,optimiser
+software-contractor-umbrella-inside-ir35-500-day-rate,software_contractor,Software contractor,110000,34,30_to_45,umbrella,inside,modest,0,eng_ni_wales,optimiser
+software-contractor-umbrella-inside-ir35-600-day-rate,software_contractor,Software contractor,132000,36,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-umbrella-inside-ir35-700-day-rate,software_contractor,Software contractor,154000,38,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-umbrella-inside-ir35-850-day-rate,software_contractor,Software contractor,187000,42,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+software-contractor-umbrella-inside-ir35-1000-day-rate,software_contractor,Software contractor,220000,44,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+it-contractor-umbrella-inside-ir35-400-day-rate,it_contractor,IT contractor,88000,32,30_to_45,umbrella,inside,modest,0,eng_ni_wales,optimiser
+it-contractor-umbrella-inside-ir35-500-day-rate,it_contractor,IT contractor,110000,36,30_to_45,umbrella,inside,modest,0,eng_ni_wales,optimiser
+it-contractor-umbrella-inside-ir35-650-day-rate,it_contractor,IT contractor,143000,40,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+it-contractor-umbrella-inside-ir35-800-day-rate,it_contractor,IT contractor,176000,42,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+management-consultant-umbrella-inside-ir35-500-day-rate,management_consultant,Management consultant,110000,34,30_to_45,umbrella,inside,modest,0,eng_ni_wales,optimiser
+management-consultant-umbrella-inside-ir35-750-day-rate,management_consultant,Management consultant,165000,40,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+management-consultant-umbrella-inside-ir35-1000-day-rate,management_consultant,Management consultant,220000,44,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+engineering-contractor-umbrella-inside-ir35-450-day-rate,engineering_contractor,Engineering contractor,99000,34,30_to_45,umbrella,inside,modest,0,eng_ni_wales,optimiser
+engineering-contractor-umbrella-inside-ir35-600-day-rate,engineering_contractor,Engineering contractor,132000,38,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+project-manager-contractor-umbrella-inside-ir35-500-day-rate,project_manager_contractor,Project manager contractor,110000,38,30_to_45,umbrella,inside,modest,0,eng_ni_wales,optimiser
+project-manager-contractor-umbrella-inside-ir35-650-day-rate,project_manager_contractor,Project manager contractor,143000,42,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+finance-contractor-umbrella-inside-ir35-700-day-rate,finance_contractor,Finance contractor,154000,40,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+finance-contractor-umbrella-inside-ir35-900-day-rate,finance_contractor,Finance contractor,198000,44,30_to_45,umbrella,inside,aggressive,0,eng_ni_wales,optimiser
+agency-director-ltd-outside-ir35-80k,agency_director,Agency director,80000,36,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+agency-director-ltd-outside-ir35-120k,agency_director,Agency director,120000,40,30_to_45,ltd_co,n_a,aggressive,0,eng_ni_wales,optimiser
+agency-director-ltd-outside-ir35-180k,agency_director,Agency director,180000,44,30_to_45,ltd_co,n_a,aggressive,0,eng_ni_wales,optimiser
+ecommerce-director-ltd-outside-ir35-70k,ecommerce_director,Ecommerce director,70000,34,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+ecommerce-director-ltd-outside-ir35-100k,ecommerce_director,Ecommerce director,100000,38,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+ecommerce-director-ltd-outside-ir35-150k,ecommerce_director,Ecommerce director,150000,42,30_to_45,ltd_co,n_a,aggressive,0,eng_ni_wales,optimiser
+ecommerce-director-ltd-outside-ir35-200k,ecommerce_director,Ecommerce director,200000,46,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+small-business-owner-ltd-outside-ir35-60k,small_business_owner,Small business owner,60000,38,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+small-business-owner-ltd-outside-ir35-90k,small_business_owner,Small business owner,90000,42,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+small-business-owner-ltd-outside-ir35-140k,small_business_owner,Small business owner,140000,46,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+saas-founder-ltd-outside-ir35-80k,saas_founder,SaaS founder,80000,32,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+saas-founder-ltd-outside-ir35-150k,saas_founder,SaaS founder,150000,38,30_to_45,ltd_co,n_a,aggressive,0,eng_ni_wales,optimiser
+saas-founder-ltd-outside-ir35-250k,saas_founder,SaaS founder,250000,42,30_to_45,ltd_co,n_a,aggressive,0,eng_ni_wales,optimiser
+accountant-ltd-outside-ir35-60k,accountant,Accountant,60000,34,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+accountant-ltd-outside-ir35-100k,accountant,Accountant,100000,40,30_to_45,ltd_co,n_a,aggressive,0,eng_ni_wales,optimiser
+accountant-ltd-outside-ir35-150k,accountant,Accountant,150000,46,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+solicitor-ltd-outside-ir35-80k,solicitor,Solicitor,80000,36,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+solicitor-ltd-outside-ir35-130k,solicitor,Solicitor,130000,42,30_to_45,ltd_co,n_a,aggressive,0,eng_ni_wales,optimiser
+solicitor-ltd-outside-ir35-200k,solicitor,Solicitor,200000,48,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+private-dentist-ltd-outside-ir35-150k,private_dentist,Private dentist,150000,42,30_to_45,ltd_co,n_a,aggressive,0,eng_ni_wales,optimiser
+private-dentist-ltd-outside-ir35-220k,private_dentist,Private dentist,220000,50,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+private-dentist-ltd-outside-ir35-280k,private_dentist,Private dentist,280000,55,55_plus,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+private-doctor-ltd-outside-ir35-180k,private_doctor,Private doctor,180000,46,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+private-doctor-ltd-outside-ir35-250k,private_doctor,Private doctor,250000,52,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+private-doctor-ltd-outside-ir35-300k,private_doctor,Private doctor,300000,58,55_plus,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+locum-doctor-ltd-outside-ir35-90k,locum_doctor,Locum doctor,90000,38,30_to_45,ltd_co,n_a,modest,0,eng_ni_wales,optimiser
+locum-doctor-ltd-outside-ir35-130k,locum_doctor,Locum doctor,130000,46,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+locum-doctor-ltd-outside-ir35-180k,locum_doctor,Locum doctor,180000,52,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+locum-doctor-ltd-outside-ir35-230k,locum_doctor,Locum doctor,230000,58,55_plus,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+freelance-designer-sole-trader-25k,freelance_designer,Freelance designer,25000,28,under_30,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+freelance-designer-sole-trader-40k,freelance_designer,Freelance designer,40000,32,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-designer-sole-trader-60k,freelance_designer,Freelance designer,60000,36,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-designer-sole-trader-75k,freelance_designer,Freelance designer,75000,40,30_to_45,sole_trader,n_a,aggressive,0,eng_ni_wales,lifestyle_se
+freelance-writer-sole-trader-20k,freelance_writer,Freelance writer,20000,30,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+freelance-writer-sole-trader-30k,freelance_writer,Freelance writer,30000,34,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-writer-sole-trader-45k,freelance_writer,Freelance writer,45000,40,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-developer-sole-trader-35k,freelance_developer,Freelance developer,35000,28,under_30,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+freelance-developer-sole-trader-50k,freelance_developer,Freelance developer,50000,32,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-developer-sole-trader-70k,freelance_developer,Freelance developer,70000,36,30_to_45,sole_trader,n_a,aggressive,0,eng_ni_wales,lifestyle_se
+freelance-developer-sole-trader-90k,freelance_developer,Freelance developer,90000,42,30_to_45,sole_trader,n_a,aggressive,0,eng_ni_wales,lifestyle_se
+freelance-photographer-sole-trader-25k,freelance_photographer,Freelance photographer,25000,32,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+freelance-photographer-sole-trader-40k,freelance_photographer,Freelance photographer,40000,38,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-photographer-sole-trader-55k,freelance_photographer,Freelance photographer,55000,42,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+electrician-sole-trader-35k,electrician,Electrician,35000,30,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+electrician-sole-trader-50k,electrician,Electrician,50000,38,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+electrician-sole-trader-70k,electrician,Electrician,70000,44,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+plumber-sole-trader-40k,plumber,Plumber,40000,34,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+plumber-sole-trader-55k,plumber,Plumber,55000,42,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+plumber-sole-trader-75k,plumber,Plumber,75000,48,45_to_55,sole_trader,n_a,aggressive,0,eng_ni_wales,pre_retiree
+builder-sole-trader-45k,builder,Builder,45000,38,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+builder-sole-trader-65k,builder,Builder,65000,44,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+builder-sole-trader-85k,builder,Builder,85000,50,45_to_55,sole_trader,n_a,aggressive,0,eng_ni_wales,pre_retiree
+personal-trainer-sole-trader-25k,personal_trainer,Personal trainer,25000,28,under_30,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+personal-trainer-sole-trader-40k,personal_trainer,Personal trainer,40000,32,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+personal-trainer-sole-trader-55k,personal_trainer,Personal trainer,55000,38,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+driving-instructor-sole-trader-30k,driving_instructor,Driving instructor,30000,38,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+driving-instructor-sole-trader-45k,driving_instructor,Driving instructor,45000,46,45_to_55,sole_trader,n_a,modest,0,eng_ni_wales,pre_retiree
+handyman-sole-trader-25k,handyman,Handyman,25000,40,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+handyman-sole-trader-40k,handyman,Handyman,40000,48,45_to_55,sole_trader,n_a,modest,0,eng_ni_wales,pre_retiree
+gardener-sole-trader-25k,gardener,Gardener,25000,42,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+gardener-sole-trader-35k,gardener,Gardener,35000,52,45_to_55,sole_trader,n_a,modest,0,eng_ni_wales,pre_retiree
+hairdresser-sole-trader-25k,hairdresser,Hairdresser,25000,32,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+hairdresser-sole-trader-40k,hairdresser,Hairdresser,40000,40,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+beauty-therapist-sole-trader-25k,beauty_therapist,Beauty therapist,25000,30,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+beauty-therapist-sole-trader-35k,beauty_therapist,Beauty therapist,35000,36,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+mobile-mechanic-sole-trader-35k,mobile_mechanic,Mobile mechanic,35000,36,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+mobile-mechanic-sole-trader-55k,mobile_mechanic,Mobile mechanic,55000,44,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+mobile-beautician-sole-trader-28k,mobile_beautician,Mobile beautician,28000,34,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+freelance-copywriter-sole-trader-45k,freelance_copywriter,Freelance copywriter,45000,40,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-translator-sole-trader-35k,freelance_translator,Freelance translator,35000,38,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-illustrator-sole-trader-30k,freelance_illustrator,Freelance illustrator,30000,32,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+freelance-illustrator-sole-trader-50k,freelance_illustrator,Freelance illustrator,50000,40,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+freelance-musician-sole-trader-25k,freelance_musician,Freelance musician,25000,32,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+yoga-instructor-sole-trader-30k,yoga_instructor,Yoga instructor,30000,36,30_to_45,sole_trader,n_a,none,0,eng_ni_wales,lifestyle_se
+private-tutor-sole-trader-35k,private_tutor,Private tutor,35000,40,30_to_45,sole_trader,n_a,modest,0,eng_ni_wales,lifestyle_se
+private-tutor-sole-trader-55k,private_tutor,Private tutor,55000,46,45_to_55,sole_trader,n_a,modest,0,eng_ni_wales,pre_retiree
+nurse-paye-plus-locum-30k-plus-15k,nurse,Nurse,30000,32,30_to_45,sole_trader,n_a,modest,15000,eng_ni_wales,lifestyle_se
+nurse-paye-plus-locum-35k-plus-25k,nurse,Nurse,35000,38,30_to_45,sole_trader,n_a,modest,25000,eng_ni_wales,lifestyle_se
+teacher-paye-plus-tutoring-35k-plus-8k,teacher,Teacher,35000,34,30_to_45,sole_trader,n_a,none,8000,eng_ni_wales,lifestyle_se
+teacher-paye-plus-tutoring-40k-plus-15k,teacher,Teacher,40000,40,30_to_45,sole_trader,n_a,modest,15000,eng_ni_wales,lifestyle_se
+police-officer-paye-plus-side-40k-plus-12k,police_officer,Police officer,40000,38,30_to_45,sole_trader,n_a,none,12000,eng_ni_wales,lifestyle_se
+nhs-doctor-paye-plus-private-75k-plus-25k,nhs_doctor,NHS doctor,75000,38,30_to_45,sole_trader,n_a,modest,25000,eng_ni_wales,lifestyle_se
+accountant-paye-plus-bookkeeping-50k-plus-15k,accountant,Accountant,50000,40,30_to_45,sole_trader,n_a,modest,15000,eng_ni_wales,lifestyle_se
+engineer-paye-plus-consulting-60k-plus-20k,engineer,Engineer,60000,42,30_to_45,sole_trader,n_a,modest,20000,eng_ni_wales,lifestyle_se
+analyst-paye-plus-freelance-55k-plus-18k,analyst,Analyst,55000,36,30_to_45,sole_trader,n_a,modest,18000,eng_ni_wales,lifestyle_se
+journalist-paye-plus-freelance-30k-plus-25k,journalist,Journalist,30000,38,30_to_45,sole_trader,n_a,modest,25000,eng_ni_wales,lifestyle_se
+designer-paye-plus-freelance-45k-plus-12k,designer,Designer,45000,32,30_to_45,sole_trader,n_a,modest,12000,eng_ni_wales,lifestyle_se
+developer-paye-plus-freelance-70k-plus-20k,developer,Developer,70000,38,30_to_45,sole_trader,n_a,modest,20000,eng_ni_wales,lifestyle_se
+nhs-doctor-paye-plus-locum-65k-plus-30k-aged-55,nhs_doctor,NHS doctor,65000,55,55_plus,sole_trader,n_a,aggressive,30000,eng_ni_wales,pre_retiree
+senior-it-contractor-ltd-outside-ir35-150k-aged-50,senior_it_contractor,Senior IT contractor,150000,50,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+senior-it-contractor-ltd-outside-ir35-200k-aged-52,senior_it_contractor,Senior IT contractor,200000,52,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+senior-it-contractor-ltd-outside-ir35-250k-aged-55,senior_it_contractor,Senior IT contractor,250000,55,55_plus,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+senior-consultant-ltd-outside-ir35-180k-aged-50,senior_consultant,Senior consultant,180000,50,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+senior-consultant-ltd-outside-ir35-250k-aged-54,senior_consultant,Senior consultant,250000,54,45_to_55,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+senior-consultant-ltd-outside-ir35-350k-aged-58,senior_consultant,Senior consultant,350000,58,55_plus,ltd_co,outside,aggressive,0,eng_ni_wales,pre_retiree
+senior-accountant-ltd-outside-ir35-130k-aged-52,senior_accountant,Senior accountant,130000,52,45_to_55,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+senior-accountant-ltd-outside-ir35-180k-aged-56,senior_accountant,Senior accountant,180000,56,55_plus,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
+senior-solicitor-ltd-outside-ir35-150k-aged-55,senior_solicitor,Senior solicitor,150000,55,55_plus,ltd_co,n_a,aggressive,0,eng_ni_wales,pre_retiree
