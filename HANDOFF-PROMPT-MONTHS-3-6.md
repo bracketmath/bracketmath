@@ -7,6 +7,64 @@
 
 ---
 
+# ⛔ GATE-PASS PREAMBLE — READ AND OBEY BEFORE WRITING ANY CODE
+
+You are taking over from the Weeks 8–12 session, which shipped 200 programmatic
+pages, four calculators, five pillar guides and the 7-layer variance engine
+(commit `264e663` on `origin/main`).
+
+There is a **mandatory 4-week indexing gate** between Weeks 8–12 and Months 3–6.
+The gate exists because BracketMath is a YMYL (Your Money Your Life) site on a
+brand-new domain with no link authority. Google sandboxes new YMYL sites that
+push too much content too fast. If you push Batch 2 before the gate has passed,
+you risk a months-long (sometimes permanent) ranking penalty that destroys the
+business plan and the asset's sale value.
+
+**Before you do anything else, do the following:**
+
+1. **Open `OPERATOR-PLAYBOOK.md`** at the workspace root and read it in full.
+   It contains the manual indexing / Lighthouse / affiliate-signup / polish work
+   the human operator must complete during the gate window.
+
+2. **Verify the gate-pass criteria (Section 7 of `OPERATOR-PLAYBOOK.md`)** are
+   all met. The operator should have ticked these in `CHECKLIST.md` under
+   "Gate-pass criteria":
+   - ≥ 108 of 215 URLs show "Indexed" status in Google Search Console → Pages.
+   - No "Manual action" or "Security issue" warnings in GSC.
+   - 5 random Lighthouse Mobile scores ≥ 95 logged in `CHECKLIST.md`.
+   - ≥ 6 approved affiliate links in the operator's tracker.
+   - About / Disclaimer / Privacy / Footer reviewed; issues logged.
+   - ≥ 4 weeks elapsed since 2026-05-13 (commit 264e663 push date).
+
+3. **If any criterion is unmet, REFUSE to proceed.** Tell the operator exactly
+   which criterion failed, point them at the relevant section of
+   `OPERATOR-PLAYBOOK.md`, and stop. Do not push code. Do not edit anything
+   public-facing. Do not "just start on Calculator #5" while waiting — your
+   prompt below requires Calc #5 in the same commit as Batch 2's CSV, and a
+   half-finished commit at the gate window is worse than no commit.
+
+4. **If all six criteria are met,** proceed with the scope below. Confirm to
+   the operator first: "All six gate-pass criteria are met. Proceeding with
+   Months 3–6 scope: Batch 2 (200 new programmatic pages with expanded
+   variance model), Calculator #5 (VAT Flat Rate Scheme Optimiser),
+   Calculator #6 (Mortgage vs Pension Optimiser), and newsletter
+   infrastructure."
+
+5. **Source of truth for "what's done so far":** `CHECKLIST.md` "Current
+   status" section. Do not start until you've read it.
+
+6. **The repo lives at `C:\dev\bracketmath` on the operator's machine, NOT in
+   OneDrive.** The OneDrive copy at
+   `C:\Users\lukeb\OneDrive\Desktop\Business idea\bracketmath\` is the
+   read-only reference / archive. All commits go from `C:\dev\bracketmath`.
+   Cline + OneDrive + dot-prefixed folders is a known-bad combination that
+   cost the previous session several hours; respect this constraint.
+
+The substantive Months 3–6 scope begins after the next horizontal rule.
+
+---
+
+
 # BracketMath — Mission, context, and your task
 
 ## 1. Who you are and what you are building

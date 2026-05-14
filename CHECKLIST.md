@@ -8,6 +8,45 @@
 
 ---
 
+# 🛑 IMMEDIATE NEXT ACTION — read OPERATOR-PLAYBOOK.md
+
+As of commit `264e663` (pushed 2026-05-13), the code side of Weeks 8–12 is
+complete: 200 programmatic pages, four calculators, five pillar guides,
+self-hosted fonts, schema markup, sitemap. The next 4–8 weeks are a
+**manual indexing gate** that *you* run, not an AI.
+
+➡️ **Open `OPERATOR-PLAYBOOK.md` at the workspace root and work through it
+section by section.** It contains every signup, every Lighthouse check,
+every indexing nudge, and every "do not do this" guard rail for the gate
+window. Specifically:
+
+1. **Section 0** — verify the deploy is healthy (15 mins, do today).
+2. **Section 1** — submit sitemap to Google + Bing, request indexing for
+   the top 20 URLs, set up daily indexing log.
+3. **Section 2** — sample 5 random pages, run Lighthouse, log scores in
+   the table at the bottom of this file.
+4. **Section 3** — apply to Awin, Impact, and direct affiliate programmes.
+   Tracker template provided.
+5. **Section 4** — site polish (About / Disclaimer / Privacy / Footer
+   review).
+6. **Section 5** — backlink work (HARO + guest post outreach), driven by
+   `BACKLINK-PLAYBOOK.md`.
+7. **Section 7** — the gate-pass criteria. Tick all six before summoning
+   the next AI agent.
+
+The next AI agent (`HANDOFF-PROMPT-MONTHS-3-6.md`) has been instructed to
+**refuse to push code** until you confirm all six gate-pass criteria are
+met. Don't try to short-circuit this — the gate exists to protect the
+asset from a YMYL ranking penalty.
+
+**Do not push any further code to bracketmath.co.uk yourself during this
+window.** No tweaks, no typo fixes, no "just one more page". Log issues
+in the "Found issues" section below; the next AI session sweeps them up
+in a single coherent commit when the gate opens.
+
+---
+
+
 ## Legend
 
 - **[ ]** = to do
