@@ -13,7 +13,21 @@ interface Props {
 const { title, description, canonical, noindex = false } = Astro.props;
 const siteName = 'BracketMath';
 const fullTitle = title.includes(siteName) ? title : `${title} — ${siteName}`;
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'https://bracketmath.co.uk').toString();
+// Compute the canonical URL.
+//
+// The site is hosted on Cloudflare Pages, which serves every page at `/path/`
+// (trailing slash) and 307-redirects `/path` → `/path/`. If we emit the canonical
+// WITHOUT the trailing slash, Google fetches the no-slash version, follows the
+// 307, lands on the with-slash page, reads the canonical pointing at no-slash,
+// and reports the result as a "Redirect error" — refusing to index. This was the
+// bug that left 214 of 215 URLs unindexed on Day 2 (15 May 2026). The fix is to
+// make the canonical match the served URL exactly: always trailing-slash. Combined
+// with `trailingSlash: 'always'` in astro.config.mjs, this guarantees alignment
+// between sitemap entries, served URLs, and canonical tags.
+const rawPath = canonical ? new URL(canonical).pathname : Astro.url.pathname;
+const normalisedPath = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
+const canonicalUrl = new URL(normalisedPath, Astro.site ?? 'https://bracketmath.co.uk').toString();
+
 ---
 <!doctype html>
 <html lang="en-GB">
